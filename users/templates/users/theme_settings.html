@@ -1,0 +1,317 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Theme Settings - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/settings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <!-- Settings Header -->
+    <div class="settings-header">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <h1><i class="fas fa-palette me-3"></i>Appearance Settings</h1>
+                <p>Customize the look and feel of your AskUP experience</p>
+            </div>
+            <div class="text-end">
+                {% if user.is_staff %}
+                    <span class="badge bg-warning text-dark fs-6">
+                        <i class="fas fa-shield-alt me-1"></i>Administrator
+                    </span>
+                {% else %}
+                    <span class="badge bg-success fs-6">
+                        <i class="fas fa-user-graduate me-1"></i>Student
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-content">
+        <!-- Settings Navigation -->
+        <nav class="settings-nav">
+            <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'profile_settings' %}" role="tab">
+                        <i class="fas fa-user"></i>Profile
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'security_settings' %}" role="tab">
+                        <i class="fas fa-shield-alt"></i>Security & Privacy
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'password_change' %}" role="tab">
+                        <i class="fas fa-key"></i>Password
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" href="{% url 'theme_settings' %}" role="tab">
+                        <i class="fas fa-palette"></i>Appearance
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'notification_settings' %}" role="tab">
+                        <i class="fas fa-bell"></i>Notifications
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Theme Settings Content -->
+        <div class="settings-section fade-in">
+            <div class="row">
+                <div class="col-md-8">
+                    <h3>Theme Preferences</h3>
+                    
+                    <form method="post" class="slide-in" id="themeForm">
+                        {% csrf_token %}
+                        
+                        <!-- Theme Selection -->
+                        <div class="form-group">
+                            <label class="form-label">Choose Your Theme</label>
+                            <div class="theme-preview">
+                                <div class="theme-option light {% if form.theme.value == 'light' %}active{% endif %}" data-theme="light">
+                                    <div class="theme-preview-header">Light Theme</div>
+                                    <div class="theme-preview-content">
+                                        <div class="theme-preview-element"></div>
+                                        <div class="theme-preview-element"></div>
+                                        <div class="theme-preview-element"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="theme-option dark {% if form.theme.value == 'dark' %}active{% endif %}" data-theme="dark">
+                                    <div class="theme-preview-header">Dark Theme</div>
+                                    <div class="theme-preview-content">
+                                        <div class="theme-preview-element"></div>
+                                        <div class="theme-preview-element"></div>
+                                        <div class="theme-preview-element"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="theme-option auto {% if form.theme.value == 'auto' %}active{% endif %}" data-theme="auto">
+                                    <div class="theme-preview-header">Auto Theme</div>
+                                    <div class="theme-preview-content">
+                                        <div class="theme-preview-element"></div>
+                                        <div class="theme-preview-element"></div>
+                                        <div class="theme-preview-element"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Hidden radio buttons -->
+                            <div style="display: none;">
+                                {% for choice in form.theme %}
+                                    {{ choice.tag }}
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="form-text">
+                                <strong>Light:</strong> Clean, bright interface perfect for daytime use<br>
+                                <strong>Dark:</strong> Easy on the eyes, ideal for low-light environments<br>
+                                <strong>Auto:</strong> Automatically switches based on your system preferences
+                            </div>
+                        </div>
+
+                        <!-- Display Options -->
+                        <div class="notification-group">
+                            <h5><i class="fas fa-desktop me-2"></i>Display Options</h5>
+                            
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h6>{{ form.compact_mode.label }}</h6>
+                                    <p>{{ form.compact_mode.help_text }}</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    {{ form.compact_mode }}
+                                </div>
+                            </div>
+                            
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h6>{{ form.animations.label }}</h6>
+                                    <p>{{ form.animations.help_text }}</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    {{ form.animations }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="settings-save-btn">
+                                <i class="fas fa-save me-2"></i>Apply Theme
+                            </button>
+                            <button type="button" class="btn btn-outline-info" onclick="previewTheme()">
+                                <i class="fas fa-eye me-2"></i>Preview Changes
+                            </button>
+                            <a href="{% url 'user_settings' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-md-4">
+                    <!-- Current Theme Status -->
+                    <h5>Current Theme</h5>
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Active Settings</h6>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Theme:</span>
+                                <span class="badge bg-primary text-capitalize">{{ profile.theme_preference }}</span>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Compact Mode:</span>
+                                {% if profile.compact_mode %}
+                                    <span class="badge bg-info">Enabled</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Disabled</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>Animations:</span>
+                                {% if profile.animations_enabled %}
+                                    <span class="badge bg-success">Enabled</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Disabled</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Theme Benefits -->
+                    <div class="mt-4">
+                        <h6>Theme Benefits</h6>
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="theme-benefits">
+                                    <div class="theme-benefit light-benefits" style="display: none;">
+                                        <h6 class="text-primary">Light Theme</h6>
+                                        <ul class="list-unstyled small mb-0">
+                                            <li><i class="fas fa-sun text-warning me-2"></i>Better readability in bright environments</li>
+                                            <li><i class="fas fa-eye text-info me-2"></i>Reduced eye strain during daytime</li>
+                                            <li><i class="fas fa-battery-full text-success me-2"></i>Lower battery usage on LCD screens</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="theme-benefit dark-benefits" style="display: none;">
+                                        <h6 class="text-light bg-dark p-2 rounded">Dark Theme</h6>
+                                        <ul class="list-unstyled small mb-0">
+                                            <li><i class="fas fa-moon text-primary me-2"></i>Easier on eyes in low light</li>
+                                            <li><i class="fas fa-battery-half text-success me-2"></i>Better battery life on OLED screens</li>
+                                            <li><i class="fas fa-adjust text-info me-2"></i>Reduced blue light exposure</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="theme-benefit auto-benefits" style="display: none;">
+                                        <h6 class="text-info">Auto Theme</h6>
+                                        <ul class="list-unstyled small mb-0">
+                                            <li><i class="fas fa-magic text-warning me-2"></i>Automatically adapts to system</li>
+                                            <li><i class="fas fa-clock text-primary me-2"></i>Changes with time of day</li>
+                                            <li><i class="fas fa-cog text-success me-2"></i>No manual switching needed</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accessibility Options -->
+                    <div class="mt-4">
+                        <h6>Accessibility</h6>
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="small mb-2">
+                                    <i class="fas fa-universal-access text-primary me-2"></i>
+                                    All themes are designed with accessibility in mind
+                                </p>
+                                <p class="small mb-2">
+                                    <i class="fas fa-contrast text-info me-2"></i>
+                                    High contrast options available
+                                </p>
+                                <p class="small mb-0">
+                                    <i class="fas fa-text-height text-success me-2"></i>
+                                    Readable fonts and proper spacing
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const themeOptions = document.querySelectorAll('.theme-option');
+    const themeRadios = document.querySelectorAll('input[name="theme"]');
+    
+    // Handle theme option clicks
+    themeOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            const theme = this.dataset.theme;
+            
+            // Update visual selection
+            themeOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update radio button
+            const radio = document.querySelector(`input[value="${theme}"]`);
+            if (radio) radio.checked = true;
+            
+            // Show theme benefits
+            showThemeBenefits(theme);
+        });
+    });
+    
+    // Show benefits for current theme
+    const currentTheme = document.querySelector('.theme-option.active');
+    if (currentTheme) {
+        showThemeBenefits(currentTheme.dataset.theme);
+    }
+    
+    function showThemeBenefits(theme) {
+        const benefits = document.querySelectorAll('.theme-benefit');
+        benefits.forEach(benefit => benefit.style.display = 'none');
+        
+        const targetBenefit = document.querySelector(`.${theme}-benefits`);
+        if (targetBenefit) {
+            targetBenefit.style.display = 'block';
+        }
+    }
+});
+
+function previewTheme() {
+    const selectedTheme = document.querySelector('.theme-option.active');
+    if (selectedTheme && window.themeManager) {
+        const theme = selectedTheme.dataset.theme;
+        window.themeManager.previewTheme(theme);
+    }
+}
+
+// Apply theme immediately when form is submitted
+document.getElementById('themeForm').addEventListener('submit', function(e) {
+    const selectedTheme = document.querySelector('.theme-option.active');
+    if (selectedTheme && window.themeManager) {
+        const theme = selectedTheme.dataset.theme;
+        const compactMode = document.querySelector('[name="compact_mode"]').checked;
+        const animations = document.querySelector('[name="animations"]').checked;
+        
+        // Apply immediately for better UX
+        window.themeManager.setTheme(theme);
+        window.themeManager.setCompactMode(compactMode);
+        window.themeManager.setAnimations(animations);
+    }
+});
+</script>
+{% endblock %}

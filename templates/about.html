@@ -1,0 +1,445 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About AskUP - Student Q&A Platform{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/modals.css' %}">
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4rem 0;
+    margin-bottom: 3rem;
+}
+
+.feature-card {
+    border: none;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.stats-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 3rem 0;
+    margin: 3rem 0;
+}
+
+.stat-card {
+    text-align: center;
+    padding: 2rem;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                {% if user.is_staff %}
+                    <h1 class="display-4 fw-bold mb-4">
+                        <i class="fas fa-shield-alt me-3"></i>Admin Portal - AskUP
+                    </h1>
+                    <p class="lead mb-4">
+                        Welcome to the AskUP Administrative Dashboard. As an administrator, you have comprehensive 
+                        control over the platform's educational ecosystem. Manage student interactions, moderate content, 
+                        and ensure academic excellence through our advanced admin tools.
+                    </p>
+                    <div class="alert alert-warning mb-4">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Administrator Access:</strong> You have elevated privileges to manage the platform and support student learning.
+                    </div>
+                {% elif user.is_authenticated %}
+                    <h1 class="display-4 fw-bold mb-4">
+                        <i class="fas fa-graduation-cap me-3"></i>Student Hub - AskUP
+                    </h1>
+                    <p class="lead mb-4">
+                        Welcome to your personalized AskUP experience! As a student member, you have access to our 
+                        comprehensive Q&A platform where you can ask questions, get expert answers, and collaborate 
+                        with peers in your academic journey.
+                    </p>
+                    <div class="alert alert-success mb-4">
+                        <i class="fas fa-user-graduate me-2"></i>
+                        <strong>Student Account:</strong> You have full access to ask questions, receive answers, and participate in the learning community.
+                    </div>
+                {% else %}
+                    <h1 class="display-4 fw-bold mb-4">About AskUP</h1>
+                    <p class="lead mb-4">
+                        AskUP is a comprehensive academic Q&A platform designed specifically for students and educators. 
+                        We bridge the gap between curiosity and knowledge, creating a collaborative learning environment 
+                        where questions lead to understanding.
+                    </p>
+                {% endif %}
+                
+                <div class="d-flex gap-3">
+                    {% if user.is_staff %}
+                        <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#adminAboutModal">
+                            <i class="fas fa-cogs me-2"></i>Admin Features
+                        </button>
+                        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+                        </a>
+                    {% elif user.is_authenticated %}
+                        <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#studentAboutModal">
+                            <i class="fas fa-book me-2"></i>Student Features
+                        </button>
+                        <a href="{% url 'student_dashboard' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-user-graduate me-2"></i>My Dashboard
+                        </a>
+                    {% else %}
+                        <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#aboutModal">
+                            <i class="fas fa-info-circle me-2"></i>Learn More
+                        </button>
+                        <a href="{% url 'signup' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Join Now
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="{% static 'images/logo.png' %}" alt="AskUP Logo" class="img-fluid" style="max-width: 300px; border-radius: 50%; box-shadow: 0 1rem 3rem rgba(255, 255, 255, 0.3);">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            {% if user.is_staff %}
+                <h2 class="display-5 fw-bold mb-4">
+                    <i class="fas fa-tools me-3"></i>Administrator Tools & Capabilities
+                </h2>
+                <p class="lead text-muted mb-5">Comprehensive administrative features to manage and moderate the educational platform</p>
+            {% elif user.is_authenticated %}
+                <h2 class="display-5 fw-bold mb-4">
+                    <i class="fas fa-graduation-cap me-3"></i>Your Student Privileges & Features
+                </h2>
+                <p class="lead text-muted mb-5">Explore all the learning tools and features available to you as a student member</p>
+            {% else %}
+                <h2 class="display-5 fw-bold mb-4">Why Choose AskUP?</h2>
+                <p class="lead text-muted mb-5">Discover the features that make AskUP the perfect platform for academic collaboration</p>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if user.is_staff %}
+        <!-- Admin Features -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="feature-card card h-100 border-warning">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-warning">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <h5 class="card-title">Question Management</h5>
+                        <p class="card-text">Assign, moderate, and track all student questions. Manage question queues and response times.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card card h-100 border-danger">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-danger">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h5 class="card-title">User Administration</h5>
+                        <p class="card-text">Manage student accounts, privileges, and access controls. Monitor user activity and engagement.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card card h-100 border-info">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-info">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h5 class="card-title">Analytics Dashboard</h5>
+                        <p class="card-text">Comprehensive statistics, performance metrics, and detailed reporting on platform usage.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="feature-card card h-100 border-success">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-success">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h5 class="card-title">Message Center</h5>
+                        <p class="card-text">Handle student inquiries, provide direct support, and manage communication workflows.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card card h-100 border-primary">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-primary">
+                            <i class="fas fa-gavel"></i>
+                        </div>
+                        <h5 class="card-title">Content Moderation</h5>
+                        <p class="card-text">Review, approve, and moderate all platform content. Enforce community guidelines and policies.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card card h-100 border-secondary">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-secondary">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h5 class="card-title">System Configuration</h5>
+                        <p class="card-text">Configure platform settings, manage categories, and customize the learning environment.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% elif user.is_authenticated %}
+        <!-- Student Features -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="feature-card card h-100 border-primary">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-primary">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <h5 class="card-title">Ask Questions</h5>
+                        <p class="card-text">Post academic questions across 20+ categories. Get help from experts and peer students.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card card h-100 border-success">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-success">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h5 class="card-title">Get Expert Answers</h5>
+                        <p class="card-text">Receive detailed explanations from qualified educators and experienced students.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card card h-100 border-info">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-info">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h5 class="card-title">Direct Messaging</h5>
+                        <p class="card-text">Send private messages to administrators for personalized help and support.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="feature-card card h-100 border-warning">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-warning">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <h5 class="card-title">Personal Dashboard</h5>
+                        <p class="card-text">Track your questions, answers, and learning progress with detailed analytics.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card card h-100 border-danger">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-danger">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h5 class="card-title">Community Access</h5>
+                        <p class="card-text">Connect with fellow students, share knowledge, and participate in academic discussions.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card card h-100 border-secondary">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-secondary">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h5 class="card-title">Mobile Access</h5>
+                        <p class="card-text">Access AskUP from any device with full functionality and responsive design.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- General Features for Non-authenticated Users -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="feature-card card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h5 class="card-title">Community Driven</h5>
+                        <p class="card-text">Connect with fellow students and experienced educators in a supportive learning environment.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-success">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h5 class="card-title">Academic Focus</h5>
+                        <p class="card-text">Specialized categories covering all academic subjects from mathematics to computer science.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-info">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h5 class="card-title">Secure Platform</h5>
+                        <p class="card-text">Advanced admin moderation and secure user management ensure a safe learning space.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="feature-card card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h5 class="card-title">24/7 Availability</h5>
+                        <p class="card-text">Get help whenever you need it. Our platform is available around the clock.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-danger">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h5 class="card-title">Mobile Friendly</h5>
+                        <p class="card-text">Access AskUP from any device with our responsive design and mobile optimization.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon text-purple">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h5 class="card-title">Track Progress</h5>
+                        <p class="card-text">Monitor your learning journey with detailed analytics and progress tracking.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Statistics Section -->
+<div class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number text-primary">1000+</div>
+                    <h5>Questions Answered</h5>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number text-success">500+</div>
+                    <h5>Active Students</h5>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number text-info">50+</div>
+                    <h5>Expert Educators</h5>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number text-warning">20+</div>
+                    <h5>Subject Categories</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Call to Action -->
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center p-5">
+                    <h3 class="card-title">Ready to Start Learning?</h3>
+                    <p class="card-text lead">Join thousands of students already using AskUP to enhance their education</p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        {% if not user.is_authenticated %}
+                            <a href="{% url 'signup' %}" class="btn btn-light btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Sign Up Now
+                            </a>
+                            <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            </a>
+                        {% else %}
+                            <a href="{% url 'ask_question' %}" class="btn btn-light btn-lg">
+                                <i class="fas fa-question-circle me-2"></i>Ask Your First Question
+                            </a>
+                            <a href="{% url 'home' %}" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-home me-2"></i>Browse Questions
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if user.is_staff %}
+    {% include 'modals/admin_about_modal.html' %}
+{% elif user.is_authenticated %}
+    {% include 'modals/student_about_modal.html' %}
+{% else %}
+    {% include 'modals/about_modal.html' %}
+{% endif %}
+{% include 'modals/contact_modal.html' %}
+{% include 'modals/terms_modal.html' %}
+{% include 'modals/privacy_modal.html' %}
+
+{% endblock %}

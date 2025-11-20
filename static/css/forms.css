@@ -1,0 +1,130 @@
+/* Form Styles */
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-card {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border-radius: 0.75rem;
+}
+
+.form-header {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    border-radius: 0.75rem 0.75rem 0 0 !important;
+}
+
+.form-header.bg-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.form-header.bg-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.form-header.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+}
+
+/* Guidelines and Tips */
+.guidelines-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: none;
+    border-radius: 0.75rem;
+}
+
+.tips-card {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 1px solid #ffeaa7;
+    border-radius: 0.75rem;
+}
+
+/* Message Form Specific */
+.message-form .form-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.message-guidelines {
+    margin-top: 2rem;
+}
+
+.message-guidelines .card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Validation Styles */
+.was-validated .form-control:valid {
+    border-color: #28a745;
+}
+
+.was-validated .form-control:invalid {
+    border-color: #dc3545;
+}
+
+.invalid-feedback {
+    display: block;
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Category Select Styling */
+.form-select optgroup {
+    font-weight: 600;
+    color: #495057;
+}
+
+.form-select option {
+    padding: 0.5rem;
+}
+
+/* Responsive Form Adjustments */
+@media (max-width: 768px) {
+    .form-container {
+        margin: 0 1rem;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .d-md-flex .btn {
+        width: auto;
+    }
+}

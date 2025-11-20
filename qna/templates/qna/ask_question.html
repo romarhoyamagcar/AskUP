@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ask Question - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 form-container">
+        <div class="form-card card shadow">
+            <div class="form-header card-header bg-info text-white">
+                <h3><i class="fas fa-question-circle"></i> Ask a Question</h3>
+                <p class="mb-0">Get help from instructors and fellow students</p>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="title" class="form-label">Question Title</label>
+                            <input type="text" class="form-control" id="title" name="title" required 
+                                   placeholder="Enter a clear, concise title for your question">
+                            <div class="form-text">Make your title specific and descriptive</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="category" class="form-label">
+                                <i class="fas fa-tags me-1"></i>Category *
+                            </label>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="">Select a category...</option>
+                                <optgroup label="Academic Subjects">
+                                    <option value="mathematics">Mathematics</option>
+                                    <option value="science">Science</option>
+                                    <option value="english">English</option>
+                                    <option value="history">History</option>
+                                    <option value="physics">Physics</option>
+                                    <option value="chemistry">Chemistry</option>
+                                    <option value="biology">Biology</option>
+                                    <option value="economics">Economics</option>
+                                    <option value="psychology">Psychology</option>
+                                    <option value="engineering">Engineering</option>
+                                    <option value="business">Business</option>
+                                    <option value="arts">Arts & Literature</option>
+                                    <option value="philosophy">Philosophy</option>
+                                    <option value="social_studies">Social Studies</option>
+                                </optgroup>
+                                <optgroup label="Programming & Computer Science">
+                                    <option value="computer_science">Computer Science</option>
+                                    <option value="python">Python Programming</option>
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="java">Java Programming</option>
+                                    <option value="cpp">C/C++ Programming</option>
+                                    <option value="csharp">C# Programming</option>
+                                    <option value="web_development">Web Development</option>
+                                    <option value="mobile_development">Mobile Development</option>
+                                    <option value="data_science">Data Science</option>
+                                    <option value="machine_learning">Machine Learning</option>
+                                    <option value="artificial_intelligence">Artificial Intelligence</option>
+                                    <option value="database">Database & SQL</option>
+                                    <option value="algorithms">Algorithms & Data Structures</option>
+                                    <option value="software_engineering">Software Engineering</option>
+                                    <option value="cybersecurity">Cybersecurity</option>
+                                    <option value="networking">Computer Networking</option>
+                                    <option value="operating_systems">Operating Systems</option>
+                                    <option value="game_development">Game Development</option>
+                                    <option value="frontend">Frontend Development</option>
+                                    <option value="backend">Backend Development</option>
+                                    <option value="devops">DevOps & Cloud</option>
+                                </optgroup>
+                                <option value="other">Other</option>
+                            </select>
+                            <div class="form-text">Choose the subject area</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="details" class="form-label">Question Details</label>
+                        <textarea class="form-control" id="details" name="details" rows="6" required
+                                  placeholder="Provide detailed information about your question. Include any relevant context, what you've tried, and what specific help you need."></textarea>
+                        <div class="form-text">The more details you provide, the better answers you'll receive</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title"><i class="fas fa-lightbulb text-warning"></i> Tips for Good Questions</h6>
+                                <ul class="mb-0">
+                                    <li>Be specific about what you're trying to achieve</li>
+                                    <li>Include any error messages you're encountering</li>
+                                    <li>Mention what you've already tried</li>
+                                    <li>Use proper grammar and formatting</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'home' %}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-info">
+                            <i class="fas fa-paper-plane"></i> Post Question
+                        </button>
+                    </div>
+                </form>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+        <div class="guidelines-card card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>Community Guidelines
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success">✓ Do</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i> Search existing questions first</li>
+                            <li><i class="fas fa-check text-success me-2"></i> Be respectful and courteous</li>
+                            <li><i class="fas fa-check text-success me-2"></i> Provide context and examples</li>
+                            <li><i class="fas fa-check text-success me-2"></i> Thank those who help you</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-danger">✗ Don't</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-times text-danger me-2"></i> Ask for homework answers directly</li>
+                            <li><i class="fas fa-times text-danger me-2"></i> Use inappropriate language</li>
+                            <li><i class="fas fa-times text-danger me-2"></i> Post duplicate questions</li>
+                            <li><i class="fas fa-times text-danger me-2"></i> Share personal information</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

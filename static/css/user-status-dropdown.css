@@ -1,0 +1,175 @@
+/* User Status Dropdown Styles */
+
+.user-status-section {
+    padding: 0.5rem 0;
+}
+
+.user-status-section .bg-light {
+    background-color: #f8f9fa !important;
+    border: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.user-status-section .bg-light:hover {
+    background-color: #e9ecef !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-status-section .fw-bold {
+    font-size: 1.1rem;
+    line-height: 1.2;
+}
+
+.user-status-section small {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Progress bar styling */
+.user-status-section .progress {
+    background-color: #e9ecef;
+    border-radius: 3px;
+}
+
+.user-status-section .progress-bar {
+    background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+/* Notification alert styling */
+.dropdown-menu .alert {
+    margin-bottom: 0.5rem;
+    border: none;
+    font-size: 0.875rem;
+}
+
+.dropdown-menu .alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Dropdown menu enhancements */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    border-radius: 10px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.dropdown-header {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    padding: 1rem;
+    margin-bottom: 0;
+    border: none;
+}
+
+.dropdown-header .badge {
+    background-color: rgba(255,255,255,0.2) !important;
+    color: white !important;
+}
+
+.dropdown-item-text {
+    padding: 0.75rem 1rem;
+    margin: 0;
+}
+
+.dropdown-item {
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+}
+
+/* Badge styling in dropdown */
+.dropdown-menu .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dropdown-menu {
+        min-width: 280px !important;
+        margin-top: 0.5rem;
+    }
+    
+    .user-status-section .fw-bold {
+        font-size: 1rem;
+    }
+    
+    .user-status-section small {
+        font-size: 0.7rem;
+    }
+}
+
+/* Animation for dropdown appearance */
+.dropdown-menu {
+    animation: dropdownFadeIn 0.3s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Status indicators with colors */
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.status-online {
+    background-color: #28a745;
+}
+
+.status-away {
+    background-color: #ffc107;
+}
+
+.status-offline {
+    background-color: #6c757d;
+}
+
+/* Hover effects for status cards */
+.user-status-section .rounded:hover {
+    cursor: pointer;
+}
+
+.user-status-section .text-primary:hover {
+    color: #0056b3 !important;
+}
+
+.user-status-section .text-success:hover {
+    color: #155724 !important;
+}
+
+.user-status-section .text-warning:hover {
+    color: #856404 !important;
+}
+
+.user-status-section .text-danger:hover {
+    color: #721c24 !important;
+}

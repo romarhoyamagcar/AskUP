@@ -1,0 +1,318 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reply to Message - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/messages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Reply Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <a href="{% url 'view_message' original_message.id %}" class="btn btn-light btn-sm me-3">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Message
+                            </a>
+                            <h4 class="mb-0">
+                                <i class="fas fa-reply me-2"></i>Reply to Message
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Reply Form -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Your Reply
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="subject" name="subject" 
+                                   value="Re: {{ original_message.subject }}" readonly>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="recipient" class="form-label">To</label>
+                            <div class="form-control-plaintext">
+                                <div class="d-flex align-items-center">
+                                    {% if original_message.sender.is_staff %}
+                                        <div class="avatar-circle bg-warning text-dark me-2" style="width: 30px; height: 30px; font-size: 0.8rem;">
+                                            <i class="fas fa-user-shield"></i>
+                                        </div>
+                                    {% else %}
+                                        <div class="avatar-circle bg-primary text-white me-2" style="width: 30px; height: 30px; font-size: 0.8rem;">
+                                            {{ original_message.sender.first_name|first|default:original_message.sender.username|first }}
+                                        </div>
+                                    {% endif %}
+                                    <div>
+                                        <strong>{{ original_message.sender.first_name|default:original_message.sender.username }}</strong>
+                                        {% if original_message.sender.is_staff %}
+                                            <span class="badge bg-warning text-dark ms-1">Administrator</span>
+                                        {% endif %}
+                                        <br>
+                                        <small class="text-muted">{{ original_message.sender.email }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="content" class="form-label">Message</label>
+                            <textarea class="form-control" id="content" name="content" rows="8" 
+                                      placeholder="Type your reply here..." required></textarea>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Be clear and respectful in your communication.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="urgent" name="urgent">
+                                <label class="form-check-label" for="urgent">
+                                    <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                                    Mark as urgent
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-1"></i>Send Reply
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="saveDraft()">
+                                <i class="fas fa-save me-1"></i>Save Draft
+                            </button>
+                            <a href="{% url 'view_message' original_message.id %}" class="btn btn-outline-danger">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Original Message -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-envelope me-2"></i>Original Message
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="original-message">
+                        <div class="mb-3">
+                            <strong>From:</strong>
+                            <div class="text-muted">{{ original_message.sender.first_name|default:original_message.sender.username }}</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Subject:</strong>
+                            <div class="text-muted">{{ original_message.subject }}</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Sent:</strong>
+                            <div class="text-muted">{{ original_message.created_at|date:"M j, Y, g:i A" }}</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Message:</strong>
+                            <div class="original-content p-3 bg-light rounded">
+                                {{ original_message.content|linebreaks|truncatewords:50 }}
+                                {% if original_message.content|wordcount > 50 %}
+                                    <div class="mt-2">
+                                        <a href="{% url 'view_message' original_message.id %}" class="text-primary small">
+                                            <i class="fas fa-external-link-alt me-1"></i>Read full message
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reply Guidelines -->
+            <div class="card mt-3 bg-light">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Reply Guidelines
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Be clear and concise in your response
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Address all points from the original message
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Use professional and respectful language
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Include relevant details or context
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Proofread before sending
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Quick Templates -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-templates me-2"></i>Quick Templates
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="insertTemplate('thank_you')">
+                            <i class="fas fa-heart me-1"></i>Thank You
+                        </button>
+                        <button class="btn btn-outline-info btn-sm" onclick="insertTemplate('follow_up')">
+                            <i class="fas fa-question me-1"></i>Follow-up Question
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" onclick="insertTemplate('resolved')">
+                            <i class="fas fa-check me-1"></i>Issue Resolved
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="insertTemplate('more_info')">
+                            <i class="fas fa-info me-1"></i>Need More Info
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function saveDraft() {
+    const content = document.getElementById('content').value;
+    const subject = document.getElementById('subject').value;
+    
+    if (!content.trim()) {
+        alert('Please enter some content before saving draft.');
+        return;
+    }
+    
+    // Save to localStorage as a simple draft system
+    const draft = {
+        subject: subject,
+        content: content,
+        timestamp: new Date().toISOString(),
+        originalMessageId: {{ original_message.id }}
+    };
+    
+    localStorage.setItem('message_draft_{{ original_message.id }}', JSON.stringify(draft));
+    
+    // Show success message
+    showAlert('success', 'Draft saved successfully!');
+}
+
+function loadDraft() {
+    const draft = localStorage.getItem('message_draft_{{ original_message.id }}');
+    if (draft) {
+        const draftData = JSON.parse(draft);
+        document.getElementById('content').value = draftData.content;
+        showAlert('info', 'Draft loaded from ' + new Date(draftData.timestamp).toLocaleString());
+    }
+}
+
+function insertTemplate(templateType) {
+    const contentField = document.getElementById('content');
+    let template = '';
+    
+    switch(templateType) {
+        case 'thank_you':
+            template = 'Thank you for your message. I appreciate your help with this matter.\n\n';
+            break;
+        case 'follow_up':
+            template = 'Thank you for your response. I have a follow-up question:\n\n';
+            break;
+        case 'resolved':
+            template = 'Thank you for your assistance. This issue has been resolved.\n\n';
+            break;
+        case 'more_info':
+            template = 'Thank you for your message. Could you please provide more information about:\n\n';
+            break;
+    }
+    
+    // Insert template at cursor position
+    const cursorPos = contentField.selectionStart;
+    const textBefore = contentField.value.substring(0, cursorPos);
+    const textAfter = contentField.value.substring(cursorPos);
+    
+    contentField.value = textBefore + template + textAfter;
+    contentField.focus();
+    contentField.setSelectionRange(cursorPos + template.length, cursorPos + template.length);
+}
+
+function showAlert(type, message) {
+    const alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert" style="position: fixed; top: 80px; right: 20px; z-index: 9999; max-width: 400px;">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', alertHtml);
+    
+    setTimeout(() => {
+        const alert = document.querySelector('.alert[style*="position: fixed"]');
+        if (alert) {
+            alert.remove();
+        }
+    }, 3000);
+}
+
+// Load draft on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadDraft();
+    
+    // Auto-save draft every 30 seconds
+    setInterval(function() {
+        const content = document.getElementById('content').value;
+        if (content.trim()) {
+            saveDraft();
+        }
+    }, 30000);
+});
+
+// Warn user about unsaved changes
+window.addEventListener('beforeunload', function(e) {
+    const content = document.getElementById('content').value;
+    if (content.trim()) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Message Management - Admin - AskUP{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-envelope me-2"></i>Message Management</h2>
+                    <p class="text-muted mb-0">Manage student messages and support requests</p>
+                </div>
+                <div>
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ total_messages|default:0 }}</h4>
+                                    <p class="mb-0">Total Messages</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-envelope fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-dark">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ pending_messages|default:0 }}</h4>
+                                    <p class="mb-0">Pending</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-clock fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ in_progress_messages|default:0 }}</h4>
+                                    <p class="mb-0">In Progress</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-spinner fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ resolved_messages|default:0 }}</h4>
+                                    <p class="mb-0">Resolved</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-check fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Table -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>Recent Messages
+                        </h5>
+                        <div>
+                            <select class="form-select form-select-sm" onchange="filterMessages(this.value)">
+                                <option value="all">All Messages</option>
+                                <option value="pending">Pending</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="resolved">Resolved</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Subject</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Priority</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for message in messages %}
+                                        <tr class="message-row" data-status="{{ message.status }}">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://ui-avatars.com/api/?name={{ message.sender.first_name }}+{{ message.sender.last_name }}&background=007bff&color=fff&size=32" 
+                                                         class="rounded-circle me-2" width="32" height="32" alt="Avatar">
+                                                    <div>
+                                                        <strong>{{ message.sender.first_name|default:message.sender.username }}</strong>
+                                                        <br><small class="text-muted">{{ message.sender.email }}</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <strong>{{ message.subject }}</strong>
+                                                <br><small class="text-muted">{{ message.content|truncatechars:50 }}</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">{{ message.get_message_type_display }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-{% if message.status == 'pending' %}warning{% elif message.status == 'in_progress' %}info{% elif message.status == 'resolved' %}success{% else %}secondary{% endif %}">
+                                                    {{ message.get_status_display }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-{% if message.priority == 'high' %}danger{% elif message.priority == 'medium' %}warning text-dark{% else %}secondary{% endif %}">
+                                                    {{ message.get_priority_display }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <small>{{ message.created_at|date:"M d, Y H:i" }}</small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a href="{% url 'admin_message_detail' message.id %}" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="{% url 'messenger_home' %}" class="btn btn-sm btn-outline-success">
+                                                        <i class="fas fa-reply"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                            <h4 class="text-muted">No messages yet</h4>
+                            <p class="text-muted">Student messages will appear here when they contact support.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterMessages(status) {
+    const rows = document.querySelectorAll('.message-row');
+    rows.forEach(row => {
+        if (status === 'all' || row.dataset.status === status) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+</script>
+{% endblock %}

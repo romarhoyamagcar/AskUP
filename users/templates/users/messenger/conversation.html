@@ -1,0 +1,349 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ conversation.title }} - Messenger - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/messenger.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Sidebar with conversations -->
+        <div class="col-md-4 col-lg-3">
+            <div class="messenger-sidebar">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4><i class="fas fa-comments me-2"></i>Messages</h4>
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#newConversationModal">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                
+                <!-- Conversations list -->
+                <div class="conversations-list">
+                    {% for conv in conversations %}
+                        <div class="conversation-item {% if conv == active_conversation %}active{% endif %}" 
+                             onclick="window.location.href='{% url 'conversation_detail' conv.id %}'">
+                            <div class="d-flex align-items-center">
+                                <div class="conversation-avatar me-3">
+                                    {% if conv.conversation_type == 'direct_message' %}
+                                        {% for participant in conv.participants.all %}
+                                            {% if participant != user %}
+                                                <img src="https://ui-avatars.com/api/?name={{ participant.first_name }}+{{ participant.last_name }}&background=007bff&color=fff&size=40" 
+                                                     class="rounded-circle" width="40" height="40" alt="Avatar">
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="group-avatar">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="conversation-info flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h6 class="conversation-title mb-1">
+                                            {% if conv.conversation_type == 'direct_message' %}
+                                                {% for participant in conv.participants.all %}
+                                                    {% if participant != user %}
+                                                        {{ participant.first_name|default:participant.username }}
+                                                        {% if participant.is_staff %}
+                                                            <span class="badge bg-warning text-dark ms-1">Admin</span>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                {{ conv.title }}
+                                            {% endif %}
+                                        </h6>
+                                        <small class="text-muted">
+                                            {% if conv.last_message_time %}
+                                                {{ conv.last_message_time|timesince }} ago
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                    {% if conv.unread_count > 0 %}
+                                        <span class="badge bg-danger">{{ conv.unread_count }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Conversation area -->
+        <div class="col-md-8 col-lg-9">
+            <div class="conversation-container">
+                <!-- Conversation header -->
+                <div class="conversation-header">
+                    <div class="d-flex align-items-center">
+                        <div class="conversation-avatar me-3">
+                            {% if conversation.conversation_type == 'direct_message' %}
+                                {% for participant in conversation.participants.all %}
+                                    {% if participant != user %}
+                                        <img src="https://ui-avatars.com/api/?name={{ participant.first_name }}+{{ participant.last_name }}&background=007bff&color=fff&size=50" 
+                                             class="rounded-circle" width="50" height="50" alt="Avatar">
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <div class="group-avatar-large">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="conversation-info flex-grow-1">
+                            <h4 class="mb-1">
+                                {% if conversation.conversation_type == 'direct_message' %}
+                                    {% for participant in conversation.participants.all %}
+                                        {% if participant != user %}
+                                            {{ participant.first_name|default:participant.username }} {{ participant.last_name }}
+                                            {% if participant.is_staff %}
+                                                <span class="badge bg-warning text-dark ms-2">Administrator</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    {{ conversation.title }}
+                                {% endif %}
+                            </h4>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-{{ conversation.get_conversation_type_display|lower }} me-2">
+                                    {{ conversation.get_conversation_type_display }}
+                                </span>
+                                <small class="text-muted">
+                                    {{ conversation.participants.count }} participant{{ conversation.participants.count|pluralize }}
+                                </small>
+                                {% if conversation.related_question %}
+                                    <span class="badge bg-info ms-2">
+                                        <i class="fas fa-question-circle me-1"></i>Question Help
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="conversation-actions">
+                            <button class="btn btn-outline-secondary btn-sm" onclick="toggleParticipants()">
+                                <i class="fas fa-users"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Messages area -->
+                <div class="messages-container" id="messagesContainer">
+                    {% for message in messages %}
+                        <div class="message {% if message.sender == user %}message-own{% else %}message-other{% endif %}">
+                            <div class="message-avatar">
+                                <img src="https://ui-avatars.com/api/?name={{ message.sender.first_name }}+{{ message.sender.last_name }}&background={% if message.sender == user %}28a745{% else %}007bff{% endif %}&color=fff&size=35" 
+                                     class="rounded-circle" width="35" height="35" alt="Avatar">
+                            </div>
+                            <div class="message-content">
+                                <div class="message-header">
+                                    <strong class="message-sender">
+                                        {{ message.sender.first_name|default:message.sender.username }}
+                                        {% if message.sender.is_staff %}
+                                            <span class="badge bg-warning text-dark ms-1">Admin</span>
+                                        {% endif %}
+                                    </strong>
+                                    <small class="message-time text-muted">
+                                        {{ message.created_at|date:"M d, H:i" }}
+                                    </small>
+                                </div>
+                                <div class="message-text">
+                                    {{ message.content|linebreaks }}
+                                </div>
+                                {% if message.attachment %}
+                                    <div class="message-attachment">
+                                        <a href="{{ message.attachment.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-paperclip me-1"></i>Attachment
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-comment fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Start the conversation</h5>
+                            <p class="text-muted">Send the first message to get things started!</p>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Message input -->
+                <div class="message-input-container">
+                    <form method="post" id="messageForm" class="d-flex align-items-end">
+                        {% csrf_token %}
+                        <div class="flex-grow-1 me-2">
+                            <textarea class="form-control message-input" name="content" id="messageInput" 
+                                      placeholder="Type your message..." rows="1" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Participants sidebar (hidden by default) -->
+<div class="participants-sidebar" id="participantsSidebar">
+    <div class="participants-header">
+        <h5><i class="fas fa-users me-2"></i>Participants</h5>
+        <button class="btn-close" onclick="toggleParticipants()"></button>
+    </div>
+    <div class="participants-list">
+        {% for participant in conversation.participants.all %}
+            <div class="participant-item">
+                <img src="https://ui-avatars.com/api/?name={{ participant.first_name }}+{{ participant.last_name }}&background=007bff&color=fff&size=40" 
+                     class="rounded-circle me-3" width="40" height="40" alt="Avatar">
+                <div class="participant-info">
+                    <h6 class="mb-1">{{ participant.first_name|default:participant.username }} {{ participant.last_name }}</h6>
+                    <small class="text-muted">
+                        {% if participant.is_staff %}
+                            <span class="badge bg-warning text-dark">Administrator</span>
+                        {% else %}
+                            <span class="badge bg-success">Student</span>
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+// Auto-scroll to bottom
+function scrollToBottom() {
+    const container = document.getElementById('messagesContainer');
+    container.scrollTop = container.scrollHeight;
+}
+
+// Auto-resize textarea
+document.getElementById('messageInput').addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = (this.scrollHeight) + 'px';
+});
+
+// Handle Enter key (Shift+Enter for new line, Enter to send)
+document.getElementById('messageInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('messageForm').submit();
+    }
+});
+
+// AJAX form submission
+document.getElementById('messageForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const messageInput = document.getElementById('messageInput');
+    const content = messageInput.value.trim();
+    
+    if (!content) return;
+    
+    // Disable input while sending
+    messageInput.disabled = true;
+    
+    fetch(window.location.href, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Add message to UI
+            const messagesContainer = document.getElementById('messagesContainer');
+            const messageHtml = `
+                <div class="message message-own">
+                    <div class="message-avatar">
+                        <img src="https://ui-avatars.com/api/?name={{ user.first_name }}+{{ user.last_name }}&background=28a745&color=fff&size=35" 
+                             class="rounded-circle" width="35" height="35" alt="Avatar">
+                    </div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <strong class="message-sender">{{ user.first_name|default:user.username }}</strong>
+                            <small class="message-time text-muted">Just now</small>
+                        </div>
+                        <div class="message-text">${content.replace(/\n/g, '<br>')}</div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.insertAdjacentHTML('beforeend', messageHtml);
+            
+            // Clear input and scroll
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            scrollToBottom();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    })
+    .finally(() => {
+        messageInput.disabled = false;
+        messageInput.focus();
+    });
+});
+
+// Toggle participants sidebar
+function toggleParticipants() {
+    const sidebar = document.getElementById('participantsSidebar');
+    sidebar.classList.toggle('show');
+}
+
+// Auto-refresh messages every 5 seconds
+let lastMessageId = {{ messages.last.id|default:0 }};
+
+setInterval(function() {
+    fetch('{% url "get_conversation_messages" conversation.id %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: 'last_message_id=' + lastMessageId
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.messages.length > 0) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            
+            data.messages.forEach(function(message) {
+                if (!message.is_own) {
+                    const messageHtml = `
+                        <div class="message message-other">
+                            <div class="message-avatar">
+                                <img src="https://ui-avatars.com/api/?name=${message.sender}&background=007bff&color=fff&size=35" 
+                                     class="rounded-circle" width="35" height="35" alt="Avatar">
+                            </div>
+                            <div class="message-content">
+                                <div class="message-header">
+                                    <strong class="message-sender">${message.sender}</strong>
+                                    <small class="message-time text-muted">${message.created_at}</small>
+                                </div>
+                                <div class="message-text">${message.content.replace(/\n/g, '<br>')}</div>
+                            </div>
+                        </div>
+                    `;
+                    messagesContainer.insertAdjacentHTML('beforeend', messageHtml);
+                }
+                lastMessageId = Math.max(lastMessageId, message.id);
+            });
+            
+            scrollToBottom();
+        }
+    });
+}, 5000);
+
+// Initial scroll to bottom
+window.addEventListener('load', scrollToBottom);
+</script>
+{% endblock %}

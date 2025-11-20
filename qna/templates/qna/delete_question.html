@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Question - AskUP{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Delete Question
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-warning me-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone. Deleting this question will also remove all associated answers and data.
+                    </div>
+                    
+                    <div class="question-preview mb-4">
+                        <h5 class="text-danger">Question to be deleted:</h5>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ question.title }}</h6>
+                                <p class="card-text">{{ question.details|truncatewords:50 }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-user me-1"></i>{{ question.author.first_name|default:question.author.username }}
+                                        <i class="fas fa-clock ms-3 me-1"></i>{{ question.created_at|timesince }} ago
+                                    </small>
+                                    <span class="badge bg-primary">{{ question.get_category_display }}</span>
+                                </div>
+                                {% if question.answers.count > 0 %}
+                                    <div class="mt-2">
+                                        <small class="text-warning">
+                                            <i class="fas fa-comments me-1"></i>
+                                            This question has {{ question.answers.count }} answer{{ question.answers.count|pluralize }} that will also be deleted.
+                                        </small>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="consequences mb-4">
+                        <h6 class="text-warning">Consequences of deletion:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-minus-circle text-danger me-2"></i>You will lose 3 points</li>
+                            <li><i class="fas fa-minus-circle text-danger me-2"></i>Your question count will decrease by 1</li>
+                            {% if question.answers.count > 0 %}
+                                <li><i class="fas fa-minus-circle text-danger me-2"></i>All {{ question.answers.count }} answer{{ question.answers.count|pluralize }} will be permanently deleted</li>
+                            {% endif %}
+                            <li><i class="fas fa-minus-circle text-danger me-2"></i>This action cannot be undone</li>
+                        </ul>
+                    </div>
+                    
+                    <form method="post" class="d-flex justify-content-between">
+                        {% csrf_token %}
+                        <a href="{% url 'question_detail' question.pk %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you absolutely sure you want to delete this question? This action cannot be undone.')">
+                            <i class="fas fa-trash me-2"></i>Delete Question
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

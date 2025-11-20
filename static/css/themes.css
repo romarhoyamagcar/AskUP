@@ -1,0 +1,427 @@
+/* Theme System CSS Variables */
+
+/* Light Theme (Default) */
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #e9ecef;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --text-muted: #adb5bd;
+    --border-color: #dee2e6;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --navbar-bg: #007bff;
+    --navbar-text: #ffffff;
+    --card-bg: #ffffff;
+    --input-bg: #ffffff;
+    --input-border: #ced4da;
+    --button-primary: #007bff;
+    --button-success: #28a745;
+    --button-warning: #ffc107;
+    --button-danger: #dc3545;
+    --button-info: #17a2b8;
+    --link-color: #007bff;
+    --link-hover: #0056b3;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+    --bg-primary: #212529;
+    --bg-secondary: #343a40;
+    --bg-tertiary: #495057;
+    --text-primary: #f8f9fa;
+    --text-secondary: #adb5bd;
+    --text-muted: #6c757d;
+    --border-color: #495057;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --navbar-bg: #343a40;
+    --navbar-text: #f8f9fa;
+    --card-bg: #343a40;
+    --input-bg: #495057;
+    --input-border: #6c757d;
+    --button-primary: #0d6efd;
+    --button-success: #198754;
+    --button-warning: #ffc107;
+    --button-danger: #dc3545;
+    --button-info: #20c997;
+    --link-color: #6ea8fe;
+    --link-hover: #9ec5fe;
+}
+
+/* Auto Theme - Uses system preference */
+@media (prefers-color-scheme: dark) {
+    [data-theme="auto"] {
+        --bg-primary: #212529;
+        --bg-secondary: #343a40;
+        --bg-tertiary: #495057;
+        --text-primary: #f8f9fa;
+        --text-secondary: #adb5bd;
+        --text-muted: #6c757d;
+        --border-color: #495057;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+        --navbar-bg: #343a40;
+        --navbar-text: #f8f9fa;
+        --card-bg: #343a40;
+        --input-bg: #495057;
+        --input-border: #6c757d;
+        --button-primary: #0d6efd;
+        --button-success: #198754;
+        --button-warning: #ffc107;
+        --button-danger: #dc3545;
+        --button-info: #20c997;
+        --link-color: #6ea8fe;
+        --link-hover: #9ec5fe;
+    }
+}
+
+/* Apply theme variables to elements */
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar {
+    background-color: var(--navbar-bg) !important;
+    color: var(--navbar-text) !important;
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+    color: var(--navbar-text) !important;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.form-control,
+.form-select {
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-primary);
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--input-bg);
+    border-color: var(--button-primary);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.border {
+    border-color: var(--border-color) !important;
+}
+
+.bg-light {
+    background-color: var(--bg-secondary) !important;
+}
+
+.bg-white {
+    background-color: var(--bg-primary) !important;
+}
+
+/* Links */
+a {
+    color: var(--link-color);
+}
+
+a:hover {
+    color: var(--link-hover);
+}
+
+/* Buttons maintain their colors but adjust for theme */
+.btn-outline-primary {
+    color: var(--button-primary);
+    border-color: var(--button-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--button-primary);
+    border-color: var(--button-primary);
+}
+
+/* Settings specific styling */
+.settings-header {
+    background: linear-gradient(135deg, var(--button-primary) 0%, #0056b3 100%) !important;
+}
+
+[data-theme="dark"] .settings-header {
+    background: linear-gradient(135deg, #343a40 0%, #212529 100%) !important;
+}
+
+.settings-content {
+    background-color: var(--card-bg) !important;
+}
+
+.settings-nav {
+    background-color: var(--bg-secondary) !important;
+    border-bottom-color: var(--border-color);
+}
+
+.settings-nav .nav-link {
+    color: var(--text-secondary);
+}
+
+.settings-nav .nav-link.active {
+    background-color: var(--card-bg);
+    color: var(--button-primary);
+}
+
+/* Override any gradient backgrounds in dark theme */
+[data-theme="dark"] .hero-section,
+[data-theme="dark"] .stats-section {
+    background: var(--bg-secondary) !important;
+}
+
+/* Ensure all cards use theme colors */
+[data-theme="dark"] .card,
+[data-theme="dark"] .notification-group,
+[data-theme="dark"] .theme-option {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Fix theme preview cards */
+[data-theme="dark"] .theme-option.dark {
+    background-color: #2c3034 !important;
+}
+
+[data-theme="dark"] .theme-option.light {
+    background-color: var(--card-bg) !important;
+}
+
+/* Override Bootstrap's default backgrounds */
+[data-theme="dark"] .bg-light {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .bg-white {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Override specific gradient backgrounds in settings */
+[data-theme="dark"] .theme-settings .settings-header,
+[data-theme="dark"] .settings-container .settings-header {
+    background: linear-gradient(135deg, #495057 0%, #343a40 100%) !important;
+}
+
+/* Fix any remaining purple/blue gradients */
+[data-theme="dark"] .hero-section,
+[data-theme="dark"] .stats-section,
+[data-theme="dark"] [style*="background: linear-gradient"],
+[data-theme="dark"] [style*="background-color: #667eea"] {
+    background: var(--bg-secondary) !important;
+}
+
+/* Ensure text is visible in dark theme */
+[data-theme="dark"] .text-white {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .text-dark {
+    color: var(--text-primary) !important;
+}
+
+/* Fix badges in dark theme */
+[data-theme="dark"] .badge {
+    color: white !important;
+}
+
+/* Override inline styles that might interfere */
+[data-theme="dark"] *:not(.badge):not(.btn) {
+    border-color: var(--border-color) !important;
+}
+
+/* Force override any inline background styles */
+[data-theme="dark"] .settings-container,
+[data-theme="dark"] .settings-container > *,
+[data-theme="dark"] .settings-section,
+[data-theme="dark"] .settings-section > * {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Specifically target the purple gradient background */
+.theme-dark .settings-container,
+.theme-dark body,
+html[data-theme="dark"] body,
+body[data-theme="dark"] {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Override any CSS that might be setting specific background colors */
+[data-theme="dark"] [style*="background"],
+[data-theme="dark"] [class*="bg-"] {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .container,
+[data-theme="dark"] .row,
+[data-theme="dark"] .col-md-8,
+[data-theme="dark"] .col-md-4 {
+    background-color: transparent !important;
+}
+
+/* Force dark theme on main content areas */
+[data-theme="dark"] main,
+[data-theme="dark"] .main-content,
+[data-theme="dark"] .content-wrapper {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Modal theming */
+.modal-content {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+}
+
+.modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+.modal-footer {
+    border-top-color: var(--border-color);
+}
+
+/* Dropdown theming */
+.dropdown-menu {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+.dropdown-item {
+    color: var(--text-primary);
+}
+
+.dropdown-item:hover {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.dropdown-divider {
+    border-top-color: var(--border-color);
+}
+
+/* Footer theming */
+footer {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-secondary) !important;
+}
+
+/* Alert theming */
+.alert-info {
+    background-color: rgba(23, 162, 184, 0.1);
+    border-color: rgba(23, 162, 184, 0.2);
+    color: var(--text-primary);
+}
+
+.alert-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+    border-color: rgba(255, 193, 7, 0.2);
+    color: var(--text-primary);
+}
+
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-color: rgba(40, 167, 69, 0.2);
+    color: var(--text-primary);
+}
+
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-color: rgba(220, 53, 69, 0.2);
+    color: var(--text-primary);
+}
+
+/* Compact Mode */
+[data-compact="true"] {
+    --spacing-sm: 0.25rem;
+    --spacing-md: 0.5rem;
+    --spacing-lg: 0.75rem;
+    --spacing-xl: 1rem;
+}
+
+[data-compact="true"] .container {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+}
+
+[data-compact="true"] .card-body {
+    padding: var(--spacing-lg);
+}
+
+[data-compact="true"] .settings-section {
+    padding: var(--spacing-lg);
+}
+
+[data-compact="true"] .form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Animation Controls */
+[data-animations="false"] * {
+    transition: none !important;
+    animation: none !important;
+}
+
+/* Theme transition effects */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Dark theme specific adjustments */
+[data-theme="dark"] .navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+[data-theme="dark"] .navbar-dark .navbar-nav .nav-link:hover {
+    color: rgba(255, 255, 255, 1);
+}
+
+[data-theme="dark"] .list-group-item {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .table {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table td {
+    border-color: var(--border-color);
+}
+
+/* Preview mode styling */
+[data-theme-preview] {
+    position: relative;
+}
+
+[data-theme-preview]::before {
+    content: "Theme Preview Mode";
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 123, 255, 0.9);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    z-index: 9999;
+    font-size: 0.875rem;
+    font-weight: 600;
+}

@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Notifications - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/notifications.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-bell me-2"></i>Notifications
+                </h2>
+                <div>
+                    <span class="badge bg-info">{{ notifications.count }} total</span>
+                </div>
+            </div>
+
+            <!-- Notifications List -->
+            <div class="notifications-container">
+                {% if notifications %}
+                    {% for notification in notifications %}
+                        <div class="notification-item {% if not notification.is_read %}unread{% endif %}" data-id="{{ notification.id }}">
+                            <div class="notification-icon">
+                                <i class="{{ notification.icon }} text-{{ notification.color }}"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-header">
+                                    <h6 class="notification-title">{{ notification.title }}</h6>
+                                    <small class="notification-time text-muted">
+                                        {{ notification.created_at|timesince }} ago
+                                    </small>
+                                </div>
+                                <p class="notification-message">{{ notification.message }}</p>
+                                {% if notification.action_url %}
+                                    <div class="notification-actions">
+                                        <a href="{{ notification.action_url }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-external-link-alt me-1"></i>View
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="notification-meta">
+                                <span class="badge bg-{{ notification.color }}">
+                                    {{ notification.get_notification_type_display }}
+                                </span>
+                                {% if not notification.is_read %}
+                                    <span class="badge bg-danger ms-2">New</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state text-center py-5">
+                        <i class="fas fa-bell-slash fa-4x text-muted mb-4"></i>
+                        <h4 class="text-muted mb-3">No notifications yet</h4>
+                        <p class="text-muted mb-4">You'll see notifications here when you earn achievements, receive answers, or get important updates.</p>
+                        <a href="{% url 'home' %}" class="btn btn-primary">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Load More Button (if needed) -->
+            {% if notifications.count >= 20 %}
+                <div class="text-center mt-4">
+                    <button class="btn btn-outline-secondary" onclick="loadMoreNotifications()">
+                        <i class="fas fa-chevron-down me-2"></i>Load More
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.notifications-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.notification-item {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.notification-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.notification-item.unread {
+    border-left: 4px solid #007bff;
+    background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+}
+
+.notification-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.notification-title {
+    margin: 0;
+    font-weight: 600;
+    color: #333;
+    flex: 1;
+}
+
+.notification-time {
+    margin-left: 10px;
+    white-space: nowrap;
+}
+
+.notification-message {
+    margin: 0;
+    color: #666;
+    line-height: 1.5;
+}
+
+.notification-actions {
+    margin-top: 10px;
+}
+
+.notification-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.empty-state {
+    background: white;
+    border-radius: 15px;
+    padding: 60px 40px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+@media (max-width: 768px) {
+    .notification-item {
+        padding: 15px;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .notification-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .notification-time {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+    
+    .notification-meta {
+        align-items: center;
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 10px;
+    }
+}
+</style>
+
+<script>
+function loadMoreNotifications() {
+    // Implement AJAX loading for more notifications if needed
+    console.log('Load more notifications');
+}
+
+// Mark notification as read when clicked
+document.querySelectorAll('.notification-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+        const notificationId = this.dataset.id;
+        if (this.classList.contains('unread')) {
+            // Mark as read via AJAX
+            fetch(`/notifications/${notificationId}/read/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.classList.remove('unread');
+                    const newBadge = this.querySelector('.badge.bg-danger');
+                    if (newBadge) {
+                        newBadge.remove();
+                    }
+                }
+            });
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Messages - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/messages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Messages Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">
+                            <i class="fas fa-envelope me-2"></i>My Messages
+                        </h3>
+                        <div>
+                            <span class="badge bg-light text-dark me-2">
+                                <i class="fas fa-envelope me-1"></i>{{ messages.count|default:0 }} Total
+                            </span>
+                            <a href="{% url 'send_message' %}" class="btn btn-light btn-sm">
+                                <i class="fas fa-plus me-1"></i>New Message
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Filters -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body py-2">
+                    <div class="btn-group" role="group" aria-label="Message filters">
+                        <input type="radio" class="btn-check" name="messageFilter" id="filterAll" autocomplete="off" checked>
+                        <label class="btn btn-outline-primary btn-sm" for="filterAll">
+                            <i class="fas fa-inbox me-1"></i>All Messages
+                        </label>
+                        
+                        <input type="radio" class="btn-check" name="messageFilter" id="filterUnread" autocomplete="off">
+                        <label class="btn btn-outline-success btn-sm" for="filterUnread">
+                            <i class="fas fa-envelope me-1"></i>Unread
+                        </label>
+                        
+                        <input type="radio" class="btn-check" name="messageFilter" id="filterSupport" autocomplete="off">
+                        <label class="btn btn-outline-info btn-sm" for="filterSupport">
+                            <i class="fas fa-headset me-1"></i>Support
+                        </label>
+                        
+                        <input type="radio" class="btn-check" name="messageFilter" id="filterSystem" autocomplete="off">
+                        <label class="btn btn-outline-warning btn-sm" for="filterSystem">
+                            <i class="fas fa-cog me-1"></i>System
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="message-item {% if not message.is_read %}unread{% endif %} mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="message-content flex-grow-1">
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <div class="message-avatar me-3">
+                                                        {% if message.sender.is_staff %}
+                                                            <div class="avatar-circle bg-warning text-dark">
+                                                                <i class="fas fa-user-shield"></i>
+                                                            </div>
+                                                        {% else %}
+                                                            <div class="avatar-circle bg-primary text-white">
+                                                                {{ message.sender.first_name|first|default:message.sender.username|first }}
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-0">{{ message.subject }}</h6>
+                                                        <small class="text-muted">
+                                                            From: {{ message.sender.first_name|default:message.sender.username }}
+                                                            {% if message.sender.is_staff %}
+                                                                <span class="badge bg-warning text-dark ms-1">Admin</span>
+                                                            {% endif %}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="message-preview">
+                                                    <p class="mb-2">{{ message.content|truncatewords:20 }}</p>
+                                                </div>
+                                                
+                                                <div class="message-meta d-flex align-items-center text-muted small">
+                                                    <i class="fas fa-clock me-1"></i>
+                                                    <span class="me-3">{{ message.created_at|timesince }} ago</span>
+                                                    {% if not message.is_read %}
+                                                        <span class="badge bg-success">New</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="message-actions">
+                                                <div class="btn-group-vertical">
+                                                    <a href="{% url 'view_message' message.id %}" class="btn btn-outline-primary btn-sm">
+                                                        <i class="fas fa-eye me-1"></i>Read
+                                                    </a>
+                                                    {% if not message.is_read %}
+                                                        <button class="btn btn-outline-success btn-sm" onclick="markAsRead({{ message.id }})">
+                                                            <i class="fas fa-check me-1"></i>Mark Read
+                                                        </button>
+                                                    {% endif %}
+                                                    <a href="{% url 'reply_message' message.id %}" class="btn btn-outline-info btn-sm">
+                                                        <i class="fas fa-reply me-1"></i>Reply
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <!-- Empty State -->
+                        <div class="text-center py-5">
+                            <i class="fas fa-envelope-open fa-4x text-muted mb-4"></i>
+                            <h4 class="text-muted mb-3">No Messages Yet</h4>
+                            <p class="text-muted mb-4">You haven't received any messages. When administrators or support staff send you messages, they'll appear here.</p>
+                            <div class="d-flex justify-content-center gap-3">
+                                <a href="{% url 'send_message' %}" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i>Send Message
+                                </a>
+                                <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-home me-2"></i>Back to Home
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-question-circle me-2"></i>Need Help?
+                    </h6>
+                    <p class="card-text small mb-3">
+                        If you have questions or need support, you can send a message to our administrators.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'send_message' %}" class="btn btn-info btn-sm">
+                            <i class="fas fa-headset me-1"></i>Contact Support
+                        </a>
+                        <a href="#" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#helpModal">
+                            <i class="fas fa-info-circle me-1"></i>Help Center
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function markAsRead(messageId) {
+    // AJAX call to mark message as read
+    fetch(`/messages/${messageId}/mark-read/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update UI to show message as read
+            const messageItem = document.querySelector(`[data-message-id="${messageId}"]`);
+            if (messageItem) {
+                messageItem.classList.remove('unread');
+                const newBadge = messageItem.querySelector('.badge.bg-success');
+                if (newBadge) {
+                    newBadge.remove();
+                }
+            }
+            
+            // Show success message
+            showAlert('success', 'Message marked as read');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('danger', 'Failed to mark message as read');
+    });
+}
+
+function showAlert(type, message) {
+    const alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert" style="position: fixed; top: 80px; right: 20px; z-index: 9999; max-width: 400px;">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', alertHtml);
+    
+    setTimeout(() => {
+        const alert = document.querySelector('.alert[style*="position: fixed"]');
+        if (alert) {
+            alert.remove();
+        }
+    }, 3000);
+}
+
+// Filter messages
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('input[name="messageFilter"]');
+    filterButtons.forEach(button => {
+        button.addEventListener('change', function() {
+            const filter = this.id.replace('filter', '').toLowerCase();
+            filterMessages(filter);
+        });
+    });
+});
+
+function filterMessages(filter) {
+    const messages = document.querySelectorAll('.message-item');
+    messages.forEach(message => {
+        let show = true;
+        
+        switch(filter) {
+            case 'unread':
+                show = message.classList.contains('unread');
+                break;
+            case 'support':
+                show = message.querySelector('.badge.bg-warning') !== null;
+                break;
+            case 'system':
+                show = message.textContent.toLowerCase().includes('system');
+                break;
+            case 'all':
+            default:
+                show = true;
+                break;
+        }
+        
+        message.style.display = show ? 'block' : 'none';
+    });
+}
+</script>
+{% endblock %}

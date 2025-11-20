@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Notification Settings - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/settings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <!-- Settings Header -->
+    <div class="settings-header">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <h1><i class="fas fa-bell me-3"></i>Notification Settings</h1>
+                <p>Control how and when you receive notifications from AskUP</p>
+            </div>
+            <div class="text-end">
+                {% if user.is_staff %}
+                    <span class="badge bg-warning text-dark fs-6">
+                        <i class="fas fa-shield-alt me-1"></i>Administrator
+                    </span>
+                {% else %}
+                    <span class="badge bg-success fs-6">
+                        <i class="fas fa-user-graduate me-1"></i>Student
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-content">
+        <!-- Settings Navigation -->
+        <nav class="settings-nav">
+            <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'profile_settings' %}" role="tab">
+                        <i class="fas fa-user"></i>Profile
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'security_settings' %}" role="tab">
+                        <i class="fas fa-shield-alt"></i>Security & Privacy
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'password_change' %}" role="tab">
+                        <i class="fas fa-key"></i>Password
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'theme_settings' %}" role="tab">
+                        <i class="fas fa-palette"></i>Appearance
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" href="{% url 'notification_settings' %}" role="tab">
+                        <i class="fas fa-bell"></i>Notifications
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Notification Settings Content -->
+        <div class="settings-section fade-in">
+            <div class="row">
+                <div class="col-md-8">
+                    <h3>Notification Preferences</h3>
+                    
+                    <form method="post" class="slide-in">
+                        {% csrf_token %}
+                        
+                        <!-- Email Notifications -->
+                        <div class="notification-group">
+                            <h5><i class="fas fa-envelope me-2"></i>Email Notifications</h5>
+                            
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h6>{{ form.email_new_answer.label }}</h6>
+                                    <p>{{ form.email_new_answer.help_text }}</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    {{ form.email_new_answer }}
+                                </div>
+                            </div>
+                            
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h6>{{ form.email_new_message.label }}</h6>
+                                    <p>{{ form.email_new_message.help_text }}</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    {{ form.email_new_message }}
+                                </div>
+                            </div>
+                            
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h6>{{ form.email_weekly_digest.label }}</h6>
+                                    <p>{{ form.email_weekly_digest.help_text }}</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    {{ form.email_weekly_digest }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Browser Notifications -->
+                        <div class="notification-group">
+                            <h5><i class="fas fa-desktop me-2"></i>Browser Notifications</h5>
+                            
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h6>{{ form.browser_notifications.label }}</h6>
+                                    <p>{{ form.browser_notifications.help_text }}</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    {{ form.browser_notifications }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notification Timing -->
+                        <div class="notification-group">
+                            <h5><i class="fas fa-clock me-2"></i>Notification Timing</h5>
+                            <p class="text-muted mb-3">Control when you receive notifications to avoid interruptions during study time.</p>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Quiet Hours Start</label>
+                                        <input type="time" class="form-control" name="quiet_start" value="22:00">
+                                        <div class="form-text">No notifications after this time</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Quiet Hours End</label>
+                                        <input type="time" class="form-control" name="quiet_end" value="08:00">
+                                        <div class="form-text">Resume notifications at this time</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="settings-save-btn">
+                                <i class="fas fa-save me-2"></i>Save Notification Settings
+                            </button>
+                            <button type="button" class="btn btn-outline-info" onclick="testNotifications()">
+                                <i class="fas fa-bell me-2"></i>Test Notifications
+                            </button>
+                            <a href="{% url 'user_settings' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-md-4">
+                    <!-- Current Notification Status -->
+                    <h5>Notification Status</h5>
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Current Settings</h6>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>New Answers:</span>
+                                {% if profile.email_new_answer %}
+                                    <span class="badge bg-success">Enabled</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Disabled</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>New Messages:</span>
+                                {% if profile.email_new_message %}
+                                    <span class="badge bg-success">Enabled</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Disabled</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Weekly Digest:</span>
+                                {% if profile.email_weekly_digest %}
+                                    <span class="badge bg-info">Enabled</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Disabled</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>Browser Alerts:</span>
+                                {% if profile.browser_notifications %}
+                                    <span class="badge bg-primary">Enabled</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Disabled</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Types -->
+                    <div class="mt-4">
+                        <h6>Notification Types</h6>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <h6 class="text-primary">
+                                        <i class="fas fa-comments me-2"></i>Answer Notifications
+                                    </h6>
+                                    <p class="small mb-0">Get notified when someone answers your question or responds to your answer.</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <h6 class="text-success">
+                                        <i class="fas fa-envelope me-2"></i>Message Notifications
+                                    </h6>
+                                    <p class="small mb-0">Receive alerts for new private messages from administrators.</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <h6 class="text-info">
+                                        <i class="fas fa-newspaper me-2"></i>Weekly Digest
+                                    </h6>
+                                    <p class="small mb-0">Summary of platform activity, popular questions, and your engagement.</p>
+                                </div>
+                                
+                                <div class="mb-0">
+                                    <h6 class="text-warning">
+                                        <i class="fas fa-desktop me-2"></i>Browser Alerts
+                                    </h6>
+                                    <p class="small mb-0">Real-time notifications while browsing AskUP.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Browser Notification Permission -->
+                    <div class="mt-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-shield-alt me-2"></i>Browser Permission
+                                </h6>
+                                <p class="small mb-2" id="permission-status">Checking browser notification permission...</p>
+                                <button class="btn btn-sm btn-outline-primary" id="request-permission" style="display: none;">
+                                    <i class="fas fa-bell me-2"></i>Enable Browser Notifications
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Tips -->
+                    <div class="mt-4">
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-lightbulb me-2"></i>Notification Tips
+                            </h6>
+                            <ul class="mb-0 small">
+                                <li>Enable answer notifications to stay updated on your questions</li>
+                                <li>Use quiet hours to avoid interruptions during study time</li>
+                                <li>Weekly digest helps you stay connected without overwhelming notifications</li>
+                                <li>You can always change these settings later</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    checkNotificationPermission();
+});
+
+function checkNotificationPermission() {
+    const statusElement = document.getElementById('permission-status');
+    const requestButton = document.getElementById('request-permission');
+    
+    if (!('Notification' in window)) {
+        statusElement.textContent = 'Browser notifications not supported';
+        statusElement.className = 'small mb-2 text-danger';
+        return;
+    }
+    
+    switch (Notification.permission) {
+        case 'granted':
+            statusElement.textContent = 'Browser notifications are enabled';
+            statusElement.className = 'small mb-2 text-success';
+            break;
+        case 'denied':
+            statusElement.textContent = 'Browser notifications are blocked';
+            statusElement.className = 'small mb-2 text-danger';
+            break;
+        case 'default':
+            statusElement.textContent = 'Browser notifications permission not set';
+            statusElement.className = 'small mb-2 text-warning';
+            requestButton.style.display = 'block';
+            break;
+    }
+}
+
+function requestNotificationPermission() {
+    if ('Notification' in window) {
+        Notification.requestPermission().then(function(permission) {
+            checkNotificationPermission();
+            if (permission === 'granted') {
+                new Notification('AskUP Notifications Enabled!', {
+                    body: 'You will now receive browser notifications from AskUP.',
+                    icon: '/static/images/logo.png'
+                });
+            }
+        });
+    }
+}
+
+function testNotifications() {
+    if (Notification.permission === 'granted') {
+        new Notification('Test Notification from AskUP', {
+            body: 'This is how notifications will appear when you receive them.',
+            icon: '/static/images/logo.png'
+        });
+    } else {
+        alert('Please enable browser notifications first to test them.');
+    }
+}
+
+// Add event listener to request permission button
+document.getElementById('request-permission').addEventListener('click', requestNotificationPermission);
+</script>
+{% endblock %}

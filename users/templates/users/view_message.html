@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Message - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/messages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Message Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <a href="{% url 'view_messages' %}" class="btn btn-light btn-sm me-3">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Messages
+                            </a>
+                            <h4 class="mb-0">
+                                <i class="fas fa-envelope-open me-2"></i>{{ message.subject }}
+                            </h4>
+                        </div>
+                        <div>
+                            {% if not message.is_read %}
+                                <span class="badge bg-success">New</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Content -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Message Info -->
+                    <div class="message-info mb-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="message-avatar me-3">
+                                {% if message.sender.is_staff %}
+                                    <div class="avatar-circle bg-warning text-dark">
+                                        <i class="fas fa-user-shield"></i>
+                                    </div>
+                                {% else %}
+                                    <div class="avatar-circle bg-primary text-white">
+                                        {{ message.sender.first_name|first|default:message.sender.username|first }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h6 class="mb-0">{{ message.sender.first_name|default:message.sender.username }}</h6>
+                                <small class="text-muted">
+                                    {% if message.sender.is_staff %}
+                                        <span class="badge bg-warning text-dark me-1">Administrator</span>
+                                    {% else %}
+                                        <span class="badge bg-primary me-1">Student</span>
+                                    {% endif %}
+                                    {{ message.sender.email }}
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <div class="message-meta text-muted small">
+                            <i class="fas fa-clock me-1"></i>
+                            <span>{{ message.created_at|date:"F j, Y, g:i A" }}</span>
+                            <span class="mx-2">•</span>
+                            <span>{{ message.created_at|timesince }} ago</span>
+                        </div>
+                    </div>
+
+                    <!-- Message Content -->
+                    <div class="message-content">
+                        <div class="content-body">
+                            {{ message.content|linebreaks }}
+                        </div>
+                    </div>
+
+                    <!-- Message Actions -->
+                    <div class="message-actions mt-4 pt-3 border-top">
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{% url 'reply_message' message.id %}" class="btn btn-primary">
+                                <i class="fas fa-reply me-1"></i>Reply
+                            </a>
+                            {% if not message.is_read %}
+                                <button class="btn btn-success" onclick="markAsRead({{ message.id }})">
+                                    <i class="fas fa-check me-1"></i>Mark as Read
+                                </button>
+                            {% endif %}
+                            <button class="btn btn-outline-secondary" onclick="printMessage()">
+                                <i class="fas fa-print me-1"></i>Print
+                            </button>
+                            <button class="btn btn-outline-danger" onclick="deleteMessage({{ message.id }})">
+                                <i class="fas fa-trash me-1"></i>Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reply History -->
+            {% if message.replies.all %}
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-comments me-2"></i>Conversation History
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        {% for reply in message.replies.all %}
+                            <div class="reply-item mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                                <div class="d-flex align-items-start">
+                                    <div class="reply-avatar me-3">
+                                        {% if reply.sender.is_staff %}
+                                            <div class="avatar-circle bg-info text-white" style="width: 35px; height: 35px; font-size: 0.8rem;">
+                                                <i class="fas fa-user-shield"></i>
+                                            </div>
+                                        {% else %}
+                                            <div class="avatar-circle bg-secondary text-white" style="width: 35px; height: 35px; font-size: 0.8rem;">
+                                                {{ reply.sender.first_name|first|default:reply.sender.username|first }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="mb-0">{{ reply.sender.first_name|default:reply.sender.username }}</h6>
+                                            <small class="text-muted">{{ reply.created_at|timesince }} ago</small>
+                                        </div>
+                                        <div class="reply-content">
+                                            {{ reply.content|linebreaks }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Message Details -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Message Details
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="detail-item mb-3">
+                        <strong>Subject:</strong>
+                        <div class="text-muted">{{ message.subject }}</div>
+                    </div>
+                    
+                    <div class="detail-item mb-3">
+                        <strong>From:</strong>
+                        <div class="text-muted">
+                            {{ message.sender.first_name|default:message.sender.username }}
+                            {% if message.sender.is_staff %}
+                                <span class="badge bg-warning text-dark ms-1">Admin</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item mb-3">
+                        <strong>Sent:</strong>
+                        <div class="text-muted">{{ message.created_at|date:"M j, Y" }}</div>
+                    </div>
+                    
+                    <div class="detail-item mb-3">
+                        <strong>Status:</strong>
+                        <div>
+                            {% if message.is_read %}
+                                <span class="badge bg-secondary">Read</span>
+                            {% else %}
+                                <span class="badge bg-success">Unread</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if message.priority %}
+                        <div class="detail-item mb-3">
+                            <strong>Priority:</strong>
+                            <div>
+                                {% if message.priority == 'high' %}
+                                    <span class="badge bg-danger">High</span>
+                                {% elif message.priority == 'medium' %}
+                                    <span class="badge bg-warning">Medium</span>
+                                {% else %}
+                                    <span class="badge bg-info">Low</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'send_message' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-plus me-1"></i>New Message
+                        </a>
+                        <a href="{% url 'view_messages' %}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-inbox me-1"></i>All Messages
+                        </a>
+                        <button class="btn btn-outline-info btn-sm" onclick="forwardMessage()">
+                            <i class="fas fa-share me-1"></i>Forward
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help -->
+            <div class="card mt-3 bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-question-circle me-2"></i>Need Help?
+                    </h6>
+                    <p class="card-text small">
+                        If you need assistance with this message or have questions, contact our support team.
+                    </p>
+                    <a href="{% url 'send_message' %}" class="btn btn-info btn-sm">
+                        <i class="fas fa-headset me-1"></i>Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function markAsRead(messageId) {
+    fetch(`/messages/${messageId}/mark-read/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to mark message as read');
+    });
+}
+
+function deleteMessage(messageId) {
+    if (confirm('Are you sure you want to delete this message? This action cannot be undone.')) {
+        fetch(`/messages/${messageId}/delete/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '{% url "view_messages" %}';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to delete message');
+        });
+    }
+}
+
+function printMessage() {
+    window.print();
+}
+
+function forwardMessage() {
+    const subject = encodeURIComponent('Fwd: {{ message.subject }}');
+    const content = encodeURIComponent('---------- Forwarded message ----------\nFrom: {{ message.sender.first_name|default:message.sender.username }}\nDate: {{ message.created_at|date:"M j, Y, g:i A" }}\nSubject: {{ message.subject }}\n\n{{ message.content }}');
+    window.location.href = `{% url 'send_message' %}?subject=${subject}&content=${content}`;
+}
+</script>
+{% endblock %}

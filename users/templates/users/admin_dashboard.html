@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <img src="{% static 'images/logo.png' %}" alt="AskUP Logo" class="me-3" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+                    </h2>
+                    <p class="text-muted mb-0">Welcome back, {{ user.first_name|default:user.username }}!</p>
+                </div>
+            </div>
+            <div>
+                <span class="badge bg-danger fs-6">
+                    <i class="fas fa-shield-alt me-1"></i>Administrator
+                </span>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="admin-stats row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card bg-primary text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="mb-0">{{ total_questions }}</h4>
+                                <p class="mb-0">Total Questions</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-question-circle fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-success text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="mb-0">{{ total_answers }}</h4>
+                                <p class="mb-0">Total Answers</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-comments fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-info text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="mb-0">{{ total_users }}</h4>
+                                <p class="mb-0">Students</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-users fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-warning text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="mb-0">{{ total_admins }}</h4>
+                                <p class="mb-0">Administrators</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-user-shield fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-bolt me-2"></i>Quick Actions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <a href="{% url 'admin_message_management' %}" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-comments me-2"></i>Messages
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="{% url 'home' %}" class="btn btn-outline-success w-100">
+                                    <i class="fas fa-home me-2"></i>View Site
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="{% url 'admin_my_records' %}" class="btn btn-outline-info w-100">
+                                    <i class="fas fa-clipboard-list me-2"></i>My Records
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="{% url 'logout' %}" class="btn btn-outline-danger w-100">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-clock me-2"></i>Recent Questions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_questions %}
+                            <div class="list-group list-group-flush">
+                                {% for question in recent_questions %}
+                                    <div class="list-group-item border-0 px-0">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-1">
+                                                    <a href="{% url 'question_detail' question.pk %}" class="text-decoration-none">
+                                                        {{ question.title|truncatechars:50 }}
+                                                    </a>
+                                                </h6>
+                                                <p class="mb-1 text-muted small">
+                                                    by {{ question.author.first_name|default:question.author.username }}
+                                                </p>
+                                                <small class="text-muted">{{ question.created_at|timesince }} ago</small>
+                                            </div>
+                                            <span class="badge bg-light text-dark">
+                                                {{ question.answers.count }} answers
+                                            </span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted text-center py-3">No questions yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user-plus me-2"></i>Recent Users
+                        </h5>
+                    <div class="card-body">
+                        {% if recent_users %}
+                            <div class="list-group list-group-flush">
+                                {% for user in recent_users %}
+                                    <div class="list-group-item border-0 px-0">
+                                        <!-- Dashboard Header -->
+                                        <div class="admin-header d-flex justify-content-between align-items-center mb-4">
+                                            <div>
+                                                <h6 class="mb-1">
+                                                    {{ user.first_name|default:user.username }} {{ user.last_name }}
+                                                </h6>
+                                                <p class="mb-0 text-muted small">{{ user.email }}</p>
+                                            </div>
+                                            <div>
+                                                {% if user.is_staff %}
+                                                    <span class="badge bg-danger">Admin</span>
+                                                {% else %}
+                                                    <span class="badge bg-primary">Student</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted text-center py-3">No users yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Communication Hub -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-comments me-2"></i>Communication Hub
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                                    <h6>Student Messages</h6>
+                                    <p class="text-muted small">Communicate with students directly</p>
+                                    <a href="{% url 'admin_message_management' %}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-envelope me-1"></i>View Messages
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <i class="fas fa-question-circle fa-2x text-success mb-2"></i>
+                                    <h6>Q&A Support</h6>
+                                    <p class="text-muted small">Answer student questions via messages</p>
+                                    <a href="{% url 'admin_question_queue' %}" class="btn btn-success btn-sm">
+                                        <i class="fas fa-list me-1"></i>View Questions
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <i class="fas fa-broadcast-tower fa-2x text-warning mb-2"></i>
+                                    <h6>Announcements</h6>
+                                    <p class="text-muted small">Send messages to all students</p>
+                                    <a href="{% url 'send_message' %}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-bullhorn me-1"></i>Send Announcement
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

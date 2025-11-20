@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Question Queue - Admin - AskUP{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-question-circle me-2"></i>Question Queue</h2>
+                    <p class="text-muted mb-0">Manage and respond to student questions</p>
+                </div>
+                <div>
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ total_questions|default:0 }}</h4>
+                                    <p class="mb-0">Total Questions</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-question-circle fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-dark">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ unanswered_questions|default:0 }}</h4>
+                                    <p class="mb-0">Unanswered</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-exclamation-triangle fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ answered_questions|default:0 }}</h4>
+                                    <p class="mb-0">Answered</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-check-circle fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ recent_questions|default:0 }}</h4>
+                                    <p class="mb-0">This Week</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-calendar-week fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questions List -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>Recent Questions
+                        </h5>
+                        <div>
+                            <select class="form-select form-select-sm" onchange="filterQuestions(this.value)">
+                                <option value="all">All Questions</option>
+                                <option value="unanswered">Unanswered</option>
+                                <option value="answered">Answered</option>
+                                <option value="recent">Recent</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if questions %}
+                        <div class="row">
+                            {% for question in questions %}
+                                <div class="col-md-6 mb-4 question-item" data-status="{% if question.answers.count > 0 %}answered{% else %}unanswered{% endif %}">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h6 class="card-title">
+                                                    <a href="{% url 'question_detail' question.pk %}" class="text-decoration-none">
+                                                        {{ question.title }}
+                                                    </a>
+                                                </h6>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="{% url 'question_detail' question.pk %}">
+                                                            <i class="fas fa-eye me-2"></i>View Details
+                                                        </a></li>
+                                                        <li><a class="dropdown-item" href="{% url 'start_question_conversation' question.pk %}">
+                                                            <i class="fas fa-comments me-2"></i>Start Conversation
+                                                        </a></li>
+                                                        <li><hr class="dropdown-divider"></li>
+                                                        <li><a class="dropdown-item text-danger" href="{% url 'delete_question' question.pk %}" 
+                                                               onclick="return confirm('Are you sure you want to delete this question?')">
+                                                            <i class="fas fa-trash me-2"></i>Delete
+                                                        </a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            
+                                            <p class="card-text text-muted">
+                                                {{ question.content|truncatechars:100 }}
+                                            </p>
+                                            
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://ui-avatars.com/api/?name={{ question.author.first_name }}+{{ question.author.last_name }}&background=007bff&color=fff&size=24" 
+                                                         class="rounded-circle me-2" width="24" height="24" alt="Avatar">
+                                                    <small class="text-muted">{{ question.author.first_name|default:question.author.username }}</small>
+                                                </div>
+                                                <small class="text-muted">{{ question.created_at|timesince }} ago</small>
+                                            </div>
+                                            
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    {% if question.answers.count > 0 %}
+                                                        <span class="badge bg-success">
+                                                            <i class="fas fa-check me-1"></i>{{ question.answers.count }} answer{{ question.answers.count|pluralize }}
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="badge bg-warning text-dark">
+                                                            <i class="fas fa-clock me-1"></i>Unanswered
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="btn-group" role="group">
+                                                    <a href="{% url 'question_detail' question.pk %}" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="{% url 'start_question_conversation' question.pk %}" class="btn btn-sm btn-outline-success">
+                                                        <i class="fas fa-comments"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Pagination -->
+                        {% if is_paginated %}
+                            <nav aria-label="Questions pagination">
+                                <ul class="pagination justify-content-center">
+                                    {% if page_obj.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                                        </li>
+                                    {% endif %}
+                                    
+                                    {% for num in page_obj.paginator.page_range %}
+                                        {% if page_obj.number == num %}
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ num }}</span>
+                                            </li>
+                                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    {% if page_obj.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-question-circle fa-4x text-muted mb-3"></i>
+                            <h4 class="text-muted">No questions yet</h4>
+                            <p class="text-muted">Student questions will appear here when they ask for help.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterQuestions(filter) {
+    const items = document.querySelectorAll('.question-item');
+    items.forEach(item => {
+        const status = item.dataset.status;
+        const isRecent = item.querySelector('.card-text').textContent.includes('hour') || 
+                        item.querySelector('.card-text').textContent.includes('minute');
+        
+        let show = false;
+        switch(filter) {
+            case 'all':
+                show = true;
+                break;
+            case 'answered':
+                show = status === 'answered';
+                break;
+            case 'unanswered':
+                show = status === 'unanswered';
+                break;
+            case 'recent':
+                show = isRecent;
+                break;
+        }
+        
+        item.style.display = show ? 'block' : 'none';
+    });
+}
+</script>
+{% endblock %}

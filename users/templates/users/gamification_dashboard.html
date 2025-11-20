@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Progress - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/gamification.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="gamification-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-1">
+                            <i class="fas fa-trophy me-2 text-warning"></i>My Learning Progress
+                        </h2>
+                        <p class="text-muted mb-0">Track your achievements and level up your skills!</p>
+                    </div>
+                    <div class="user-level">
+                        <div class="level-badge">
+                            <span class="level-number">{{ user_stats.points.level }}</span>
+                            <span class="level-label">Level</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="stat-card total-points">
+                <div class="stat-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ user_stats.points.total_points }}</h3>
+                    <p>Total Points</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card current-level">
+                <div class="stat-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ user_stats.points.level }}</h3>
+                    <p>Current Level</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card achievements">
+                <div class="stat-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ user_stats.achievements_count }}</h3>
+                    <p>Achievements</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card rank">
+                <div class="stat-icon">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>#{{ user_stats.rank }}</h3>
+                    <p>Global Rank</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Progress -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card level-progress-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-line me-2"></i>Level Progress
+                        </h5>
+                        <span class="badge bg-primary">{{ user_stats.progress_to_next_level.percentage|floatformat:1 }}% Complete</span>
+                    </div>
+                    <div class="level-progress-bar">
+                        <div class="progress mb-2" style="height: 20px;">
+                            {% with percentage=user_stats.progress_to_next_level.percentage|floatformat:1 %}
+                            <div class="progress-bar bg-gradient" 
+                                 role="progressbar" 
+                                 style="width: {{ percentage }}%"
+                                 aria-valuenow="{{ percentage }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                            {% endwith %}
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">Level {{ user_stats.points.level }}</small>
+                            <small class="text-muted">{{ user_stats.progress_to_next_level.points_needed }} points to Level {{ user_stats.points.level|add:1 }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Points Breakdown -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>Points Breakdown
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="points-breakdown">
+                        <div class="points-item">
+                            <div class="points-category">
+                                <i class="fas fa-question-circle text-primary"></i>
+                                <span>Questions Asked</span>
+                            </div>
+                            <div class="points-value">{{ user_stats.points.questions_points }}</div>
+                        </div>
+                        <div class="points-item">
+                            <div class="points-category">
+                                <i class="fas fa-comments text-success"></i>
+                                <span>Answers Given</span>
+                            </div>
+                            <div class="points-value">{{ user_stats.points.answers_points }}</div>
+                        </div>
+                        <div class="points-item">
+                            <div class="points-category">
+                                <i class="fas fa-hands-helping text-info"></i>
+                                <span>Helping Others</span>
+                            </div>
+                            <div class="points-value">{{ user_stats.points.helping_points }}</div>
+                        </div>
+                        <div class="points-item">
+                            <div class="points-category">
+                                <i class="fas fa-fire text-warning"></i>
+                                <span>Consistency</span>
+                            </div>
+                            <div class="points-value">{{ user_stats.points.consistency_points }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Streak Information -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-fire me-2"></i>Learning Streak
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="streak-display">
+                        <div class="streak-number">{{ user_stats.points.current_streak }}</div>
+                        <div class="streak-label">Current Streak</div>
+                    </div>
+                    <div class="streak-stats mt-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="streak-stat">
+                                    <strong>{{ user_stats.points.longest_streak }}</strong>
+                                    <small class="d-block text-muted">Longest Streak</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="streak-stat">
+                                    <strong>{{ user_stats.points.last_activity_date|default:"Never" }}</strong>
+                                    <small class="d-block text-muted">Last Activity</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-trophy me-2"></i>Achievements ({{ user_stats.achievements_count }})
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if user_stats.achievements %}
+                        <div class="achievements-grid">
+                            {% for student_achievement in user_stats.achievements %}
+                                <div class="achievement-card earned">
+                                    <div class="achievement-icon {{ student_achievement.achievement.color }}">
+                                        <i class="{{ student_achievement.achievement.icon }}"></i>
+                                    </div>
+                                    <div class="achievement-info">
+                                        <h6>{{ student_achievement.achievement.name }}</h6>
+                                        <p>{{ student_achievement.achievement.description }}</p>
+                                        <small class="text-muted">Earned {{ student_achievement.earned_at|timesince }} ago</small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-trophy fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No achievements yet</h5>
+                            <p class="text-muted">Start asking questions and providing answers to earn your first achievement!</p>
+                            <a href="{% url 'ask_question' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Ask Your First Question
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Preview -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-crown me-2"></i>Top Learners
+                    </h5>
+                    <a href="{% url 'leaderboard' %}" class="btn btn-sm btn-outline-primary">View Full Leaderboard</a>
+                </div>
+                <div class="card-body">
+                    <div class="leaderboard-preview">
+                        {% for leader in leaderboard %}
+                            <div class="leader-item {% if leader.student == user %}current-user{% endif %}">
+                                <div class="leader-rank">
+                                    {% if forloop.counter == 1 %}
+                                        <i class="fas fa-crown text-warning"></i>
+                                    {% elif forloop.counter == 2 %}
+                                        <i class="fas fa-medal text-secondary"></i>
+                                    {% elif forloop.counter == 3 %}
+                                        <i class="fas fa-award text-warning"></i>
+                                    {% else %}
+                                        {{ forloop.counter }}
+                                    {% endif %}
+                                </div>
+                                <div class="leader-info">
+                                    <strong>{{ leader.student.first_name|default:leader.student.username }}</strong>
+                                    <small class="d-block text-muted">Level {{ leader.level }}</small>
+                                </div>
+                                <div class="leader-points">
+                                    {{ leader.total_points }} pts
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

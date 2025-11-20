@@ -1,0 +1,424 @@
+/* Gamification Dashboard Styles */
+
+/* Header Styles */
+.gamification-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    color: white;
+    margin-bottom: 30px;
+}
+
+.user-level {
+    text-align: center;
+}
+
+.level-badge {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.level-number {
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.level-label {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+/* Stat Cards */
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: none;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.total-points .stat-icon {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+}
+
+.current-level .stat-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.achievements .stat-icon {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.rank .stat-icon {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.stat-content h3 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+.stat-content p {
+    margin: 0;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Level Progress */
+.level-progress-card {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    border-radius: 15px;
+}
+
+.progress-bar.bg-gradient {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+}
+
+.progress {
+    border-radius: 10px;
+    background-color: #f8f9fa;
+}
+
+/* Points Breakdown */
+.points-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.points-item {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.points-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+}
+
+.points-category {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.points-category i {
+    font-size: 1.2rem;
+}
+
+.points-value {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+/* Streak Display */
+.streak-display {
+    margin-bottom: 20px;
+}
+
+.streak-number {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #ff6b35;
+    line-height: 1;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.streak-label {
+    font-size: 1.1rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.streak-stat {
+    text-align: center;
+}
+
+.streak-stat strong {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+/* Achievements Grid */
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.achievement-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+}
+
+.achievement-card.earned {
+    border-color: #28a745;
+    background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+}
+
+.achievement-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.achievement-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.achievement-icon.bronze {
+    background: linear-gradient(135deg, #cd7f32 0%, #b8860b 100%);
+}
+
+.achievement-icon.silver {
+    background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%);
+}
+
+.achievement-icon.gold {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+}
+
+.achievement-icon.platinum {
+    background: linear-gradient(135deg, #e5e4e2 0%, #d3d3d3 100%);
+}
+
+.achievement-info h6 {
+    margin: 0 0 5px 0;
+    font-weight: 600;
+    color: #333;
+}
+
+.achievement-info p {
+    margin: 0 0 5px 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Leaderboard Preview */
+.leaderboard-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.leader-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.leader-item:hover {
+    background: #e9ecef;
+}
+
+.leader-item.current-user {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border: 2px solid #2196f3;
+}
+
+.leader-rank {
+    width: 40px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.leader-info {
+    flex: 1;
+    margin-left: 15px;
+}
+
+.leader-points {
+    font-weight: bold;
+    color: #667eea;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .gamification-header {
+        padding: 20px;
+        text-align: center;
+    }
+    
+    .level-badge {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto;
+    }
+    
+    .level-number {
+        font-size: 1.5rem;
+    }
+    
+    .stat-card {
+        padding: 20px;
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+    
+    .achievements-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .achievement-card {
+        padding: 15px;
+    }
+    
+    .streak-number {
+        font-size: 3rem;
+    }
+    
+    .points-item {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stat-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .achievement-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .leader-item {
+        padding: 12px;
+    }
+    
+    .streak-number {
+        font-size: 2.5rem;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Notification Styles */
+.notification-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    max-width: 350px;
+    animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification-popup.achievement {
+    background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+    border-left: 5px solid #28a745;
+}
+
+.notification-popup.level-up {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    border-left: 5px solid #ffc107;
+}

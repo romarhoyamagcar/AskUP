@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile Settings - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/settings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <!-- Settings Header -->
+    <div class="settings-header">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <h1><i class="fas fa-user me-3"></i>Profile Settings</h1>
+                <p>Manage your personal information and profile details</p>
+            </div>
+            <div class="text-end">
+                {% if user.is_staff %}
+                    <span class="badge bg-warning text-dark fs-6">
+                        <i class="fas fa-shield-alt me-1"></i>Administrator
+                    </span>
+                {% else %}
+                    <span class="badge bg-success fs-6">
+                        <i class="fas fa-user-graduate me-1"></i>Student
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-content">
+        <!-- Settings Navigation -->
+        <nav class="settings-nav">
+            <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" href="{% url 'profile_settings' %}" role="tab">
+                        <i class="fas fa-user"></i>Profile
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'security_settings' %}" role="tab">
+                        <i class="fas fa-shield-alt"></i>Security & Privacy
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'password_change' %}" role="tab">
+                        <i class="fas fa-key"></i>Password
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'theme_settings' %}" role="tab">
+                        <i class="fas fa-palette"></i>Appearance
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'notification_settings' %}" role="tab">
+                        <i class="fas fa-bell"></i>Notifications
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Profile Settings Content -->
+        <div class="settings-section fade-in">
+            <div class="row">
+                <div class="col-md-8">
+                    <h3>Personal Information</h3>
+                    
+                    <!-- Profile Picture Section -->
+                    <div class="profile-picture-section">
+                        <div class="profile-avatar">
+                            {{ user.first_name.0|default:user.username.0|upper }}{{ user.last_name.0|upper|default:'' }}
+                        </div>
+                        <h5>Profile Picture</h5>
+                        <p class="text-muted">Your profile picture is automatically generated from your initials</p>
+                    </div>
+
+                    <!-- Profile Form -->
+                    <form method="post" class="slide-in">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                                    {{ form.first_name }}
+                                    {% if form.first_name.errors %}
+                                        <div class="text-danger small">{{ form.first_name.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                                    {{ form.last_name }}
+                                    {% if form.last_name.errors %}
+                                        <div class="text-danger small">{{ form.last_name.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+                            {{ form.email }}
+                            <div class="form-text">We'll use this for important notifications and account recovery</div>
+                            {% if form.email.errors %}
+                                <div class="text-danger small">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.bio.id_for_label }}" class="form-label">Bio</label>
+                            {{ form.bio }}
+                            <div class="form-text">Tell us about yourself, your interests, or academic goals</div>
+                            {% if form.bio.errors %}
+                                <div class="text-danger small">{{ form.bio.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.phone.id_for_label }}" class="form-label">Phone Number</label>
+                                    {{ form.phone }}
+                                    <div class="form-text">Optional - for account recovery purposes</div>
+                                    {% if form.phone.errors %}
+                                        <div class="text-danger small">{{ form.phone.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.location.id_for_label }}" class="form-label">Location</label>
+                                    {{ form.location }}
+                                    <div class="form-text">City, Country (optional)</div>
+                                    {% if form.location.errors %}
+                                        <div class="text-danger small">{{ form.location.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.website.id_for_label }}" class="form-label">Website</label>
+                            {{ form.website }}
+                            <div class="form-text">Your personal website or portfolio (optional)</div>
+                            {% if form.website.errors %}
+                                <div class="text-danger small">{{ form.website.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="settings-save-btn">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                            <a href="{% url 'user_settings' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-md-4">
+                    <!-- Account Information -->
+                    <h5>Account Information</h5>
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Account Details</h6>
+                            <div class="mb-2">
+                                <strong>Username:</strong> {{ user.username }}
+                            </div>
+                            <div class="mb-2">
+                                <strong>Member Since:</strong> {{ user.date_joined|date:"M d, Y" }}
+                            </div>
+                            <div class="mb-2">
+                                <strong>Last Login:</strong> {{ user.last_login|timesince }} ago
+                            </div>
+                            <div class="mb-2">
+                                <strong>Account Type:</strong> 
+                                {% if user.is_staff %}
+                                    <span class="badge bg-warning text-dark">Administrator</span>
+                                {% else %}
+                                    <span class="badge bg-success">Student</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Summary -->
+                    <div class="mt-4">
+                        <h6>Activity Summary</h6>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Questions Asked:</span>
+                                    <span class="badge bg-primary">{{ profile.questions_asked }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Answers Given:</span>
+                                    <span class="badge bg-success">{{ profile.answers_given }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Messages Sent:</span>
+                                    <span class="badge bg-info">{{ profile.messages_sent }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="mt-4">
+                        <h6>Quick Links</h6>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'security_settings' %}" class="btn btn-outline-warning btn-sm">
+                                <i class="fas fa-shield-alt me-2"></i>Privacy Settings
+                            </a>
+                            <a href="{% url 'password_change' %}" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-key me-2"></i>Change Password
+                            </a>
+                            {% if user.is_staff %}
+                                <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+                                </a>
+                            {% else %}
+                                <a href="{% url 'student_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-user-graduate me-2"></i>My Dashboard
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

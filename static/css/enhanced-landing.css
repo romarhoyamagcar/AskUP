@@ -1,0 +1,357 @@
+/* Enhanced Landing Page Styles */
+
+/* Hero Interactive Section */
+.hero-interactive-section {
+    min-height: 80vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Floating Elements Animation */
+.floating-elements {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.floating-card {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 15px 20px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    animation: float 6s ease-in-out infinite;
+    transition: all 0.3s ease;
+    z-index: -1;
+}
+
+/* Ensure hero foreground content always sits above floating cards */
+.hero-interactive-section .jumbotron,
+.hero-interactive-section .hero-actions,
+.hero-interactive-section .live-stats,
+.hero-interactive-section .hero-interactive-content {
+    position: relative;
+    z-index: 2;
+}
+
+.floating-card i {
+    font-size: 1.5rem;
+}
+
+.floating-card.math {
+    bottom: 55%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.floating-card.code {
+    bottom: 60%;
+    right: 12%;
+    animation-delay: 1.5s;
+}
+
+.floating-card.science {
+    bottom: 20%;
+    left: 8%;
+    animation-delay: 3s;
+}
+
+.floating-card.ai {
+    bottom: 5%;
+    right: 10%;
+    animation-delay: 4.5s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    33% {
+        transform: translateY(-20px) rotate(1deg);
+    }
+    66% {
+        transform: translateY(-10px) rotate(-1deg);
+    }
+}
+
+/* Animated Text */
+.animated-text {
+    position: relative;
+    z-index: 2;
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, #fff, #f0f8ff, #e6f3ff);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 3s ease-in-out infinite;
+    display: inline-block;
+    margin: 0 10px;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Live Stats */
+.live-stats {
+    position: relative;
+    z-index: 2;
+}
+
+.stat-item {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 0 15px;
+    text-align: center;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.9rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Subject Explorer Section */
+.subject-explorer-section {
+    padding: 60px 0;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 20px;
+    margin-top: 40px;
+}
+
+.subject-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+    padding: 0 20px;
+}
+
+.subject-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.subject-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s;
+}
+
+.subject-card:hover::before {
+    left: 100%;
+}
+
+.subject-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.subject-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    transition: all 0.3s ease;
+}
+
+.subject-card:hover .subject-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.subject-card h4 {
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.subject-card p {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+.subject-stats {
+    background: #f8f9fa;
+    border-radius: 25px;
+    padding: 8px 16px;
+    display: inline-block;
+    font-size: 0.85rem;
+    color: #495057;
+    font-weight: 500;
+}
+
+/* Enhanced Statistics Section */
+.enhanced-stats {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 60px 0;
+    color: white;
+    margin: 60px 0;
+}
+
+.enhanced-stats .card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.enhanced-stats .card:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.enhanced-stats .card i {
+    background: rgba(255, 255, 255, 0.2);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    transition: all 0.3s ease;
+}
+
+.enhanced-stats .card:hover i {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .floating-elements {
+        display: none;
+    }
+    
+    .hero-interactive-section {
+        min-height: 60vh;
+    }
+    
+    .subject-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .stat-item {
+        margin: 10px 5px;
+        padding: 15px;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .gradient-text {
+        margin: 0 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .subject-explorer-section {
+        padding: 40px 0;
+    }
+    
+    .subject-card {
+        padding: 30px 20px;
+    }
+    
+    .subject-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}
+
+/* Animation for page load */
+.fade-in-up {
+    animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Interactive hover effects */
+.subject-card[data-subject="programming"]:hover .subject-icon {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.subject-card[data-subject="mathematics"]:hover .subject-icon {
+    background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+}
+
+.subject-card[data-subject="science"]:hover .subject-icon {
+    background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+}
+
+.subject-card[data-subject="ai"]:hover .subject-icon {
+    background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+}

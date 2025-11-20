@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Records - Admin - AskUP{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-clipboard-list me-2"></i>My Admin Records</h2>
+                    <p class="text-muted mb-0">Track your administrative activities and contributions</p>
+                </div>
+                <div>
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ messages_handled|default:0 }}</h4>
+                                    <p class="mb-0">Messages Handled</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-envelope fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ questions_answered|default:0 }}</h4>
+                                    <p class="mb-0">Questions Answered</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-question-circle fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ conversations_started|default:0 }}</h4>
+                                    <p class="mb-0">Conversations</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-comments fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-dark">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="mb-0">{{ students_helped|default:0 }}</h4>
+                                    <p class="mb-0">Students Helped</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-users fa-2x opacity-75"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Recent Activities -->
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-history me-2"></i>Recent Activities
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if recent_activities %}
+                                <div class="timeline">
+                                    {% for activity in recent_activities %}
+                                        <div class="timeline-item">
+                                            <div class="timeline-marker bg-{{ activity.type|default:'primary' }}">
+                                                <i class="fas fa-{{ activity.icon|default:'circle' }}"></i>
+                                            </div>
+                                            <div class="timeline-content">
+                                                <h6 class="timeline-title">{{ activity.title }}</h6>
+                                                <p class="timeline-description">{{ activity.description }}</p>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-clock me-1"></i>{{ activity.created_at|timesince }} ago
+                                                </small>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No recent activities</h5>
+                                    <p class="text-muted">Your administrative activities will appear here.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-pie me-2"></i>Performance Summary
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <small class="text-muted">Response Rate</small>
+                                    <small class="text-muted">{{ response_rate|default:0 }}%</small>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-success" style="width: {{ response_rate|default:0 }}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <small class="text-muted">Average Response Time</small>
+                                    <small class="text-muted">{{ avg_response_time|default:"N/A" }}</small>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-info" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <small class="text-muted">Student Satisfaction</small>
+                                    <small class="text-muted">{{ satisfaction_rate|default:0 }}%</small>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-warning" style="width: {{ satisfaction_rate|default:0 }}%"></div>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="text-center">
+                                <h4 class="text-primary mb-1">{{ total_score|default:0 }}</h4>
+                                <small class="text-muted">Admin Score</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-bolt me-2"></i>Quick Actions
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'admin_message_management' %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-envelope me-2"></i>Check Messages
+                                </a>
+                                <a href="{% url 'admin_question_queue' %}" class="btn btn-outline-success btn-sm">
+                                    <i class="fas fa-question-circle me-2"></i>Review Questions
+                                </a>
+                                <a href="{% url 'messenger_home' %}" class="btn btn-outline-info btn-sm">
+                                    <i class="fas fa-comments me-2"></i>Open Messenger
+                                </a>
+                                <a href="{% url 'send_message' %}" class="btn btn-outline-warning btn-sm">
+                                    <i class="fas fa-bullhorn me-2"></i>Send Announcement
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -22px;
+    top: 5px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 3px solid #007bff;
+}
+
+.timeline-title {
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.timeline-description {
+    margin-bottom: 10px;
+    color: #6c757d;
+}
+</style>
+{% endblock %}

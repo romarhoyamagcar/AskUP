@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign Up - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="signup-hero">
+    <div class="signup-aurora"></div>
+    <div class="signup-shapes" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="row align-items-center g-4 justify-content-center">
+        <div class="col-xl-5 col-lg-6">
+            <div class="signup-info-card glass-card">
+                <h4><i class="fas fa-graduation-cap me-2"></i>Why students love AskUP</h4>
+                <p class="text-muted">Learn with peers, get mentor feedback, and stay motivated with progress tracking.</p>
+
+                <ul class="signup-benefits">
+                    <li>
+                        <span class="benefit-icon"><i class="fas fa-lightbulb"></i></span>
+                        <div>
+                            <strong>Smart coaching</strong>
+                            <p>Daily streak challenges and tailored reminders keep you consistent.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="benefit-icon"><i class="fas fa-users"></i></span>
+                        <div>
+                            <strong>Supportive community</strong>
+                            <p>Admins and fellow students collaborate in real-time discussions.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="benefit-icon"><i class="fas fa-trophy"></i></span>
+                        <div>
+                            <strong>Gamified growth</strong>
+                            <p>Earn badges, climb the leaderboard, and unlock study perks.</p>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="signup-steps">
+                    <div class="step-item">
+                        <div class="step-dot">1</div>
+                        <div>
+                            <strong>Create your profile</strong>
+                            <p>Pick a username & tell us what you love to learn.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-dot">2</div>
+                        <div>
+                            <strong>Ask smarter</strong>
+                            <p>Use guided templates to describe your question clearly.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-dot">3</div>
+                        <div>
+                            <strong>Level up</strong>
+                            <p>Track streaks, earn achievements, and showcase expertise.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="community-stats" id="communityStats">
+                    <div>
+                        <h5 data-stat="total_students">0</h5>
+                        <span>Active Learners</span>
+                    </div>
+                    <div>
+                        <h5 data-stat="total_questions">0</h5>
+                        <span>Questions Solved</span>
+                    </div>
+                    <div>
+                        <h5 data-stat="community_rating">0</h5>
+                        <span>Community Rating</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-5 col-lg-6">
+            <div class="signup-card">
+                <div class="signup-header">
+                    <span class="badge rounded-pill bg-success-subtle text-success">Student Access</span>
+                    <h3>Join AskUP</h3>
+                    <p>Unlock collaborative learning, guided feedback, and rewards.</p>
+                </div>
+
+                <div class="signup-body">
+                    <form method="post" class="signup-form">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label for="id_username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="id_username" name="username" placeholder="e.g. future_engineer" required>
+                            <small>Choose a unique handle for the community.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="id_email" name="email" placeholder="you@example.com" required>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_first_name" class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="id_first_name" name="first_name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_last_name" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="id_last_name" name="last_name" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_password1" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="id_password1" name="password1" placeholder="8+ characters" required>
+                            <small>Use a mix of letters, numbers, and symbols.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_password2" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="id_password2" name="password2" placeholder="Repeat password" required>
+                        </div>
+
+                        {% if form.errors %}
+                            <div class="auth-error">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <div><strong>{{ field|title }}:</strong> {{ error }}</div>
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="form-check neon-check">
+                            <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms of Service</a> & <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn auth-btn neon-btn w-100">
+                            <span>Create Student Account</span>
+                            <i class="fas fa-rocket"></i>
+                        </button>
+                    </form>
+
+                    <div class="signup-footer">
+                        <span>Already have an account?</span>
+                        <a href="{% url 'login' %}">Login here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statElements = {
+        total_students: document.querySelector('[data-stat="total_students"]'),
+        total_questions: document.querySelector('[data-stat="total_questions"]'),
+        community_rating: document.querySelector('[data-stat="community_rating"]'),
+    };
+
+    function animateValue(el, start, end, duration, suffix='') {
+        const range = end - start;
+        const stepTime = Math.abs(Math.floor(duration / range));
+        let current = start;
+        const timer = setInterval(() => {
+            current += 1;
+            el.textContent = `${current}${suffix}`;
+            if (current >= end) {
+                clearInterval(timer);
+                el.textContent = `${end}${suffix}`;
+            }
+        }, Math.max(stepTime, 20));
+    }
+
+    function updateStats() {
+        fetch('/api/community-stats/')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) return;
+                const stats = data.data;
+                animateValue(statElements.total_students, 0, stats.total_students, 1200, '+');
+                animateValue(statElements.total_questions, 0, stats.total_questions, 1200, '+');
+                statElements.community_rating.textContent = stats.average_rating;
+            })
+            .catch(() => {
+                statElements.total_students.textContent = '1500+';
+                statElements.total_questions.textContent = '3200+';
+                statElements.community_rating.textContent = '4.9/5';
+            });
+    }
+
+    updateStats();
+    setInterval(updateStats, 30000);
+});
+</script>
+{% endblock %}

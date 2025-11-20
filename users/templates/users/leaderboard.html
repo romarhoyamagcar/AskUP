@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Leaderboard - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/gamification.css' %}">
+<style>
+.leaderboard-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+.leaderboard-card {
+    border: none;
+    border-radius: 18px;
+    box-shadow: 0 15px 45px rgba(15, 23, 42, 0.15);
+}
+.leaderboard-header {
+    background: linear-gradient(135deg, #3b82f6, #9333ea);
+    border-radius: 18px 18px 0 0;
+    color: white;
+    padding: 2rem;
+}
+.leaderboard-header h2 {
+    margin-bottom: 0.5rem;
+}
+.category-tabs .nav-link {
+    border-radius: 999px;
+    padding: 0.45rem 1.5rem;
+    font-weight: 600;
+}
+.category-tabs .nav-link.active {
+    background: #1e3a8a;
+}
+.leaderboard-table {
+    margin-bottom: 0;
+}
+.leaderboard-table thead {
+    background: #f9fafb;
+}
+.leaderboard-table tbody tr {
+    transition: background 0.2s ease;
+}
+.leaderboard-table tbody tr:hover {
+    background: #f0f9ff;
+}
+.rank-badge {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+.rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #78350f; }
+.rank-2 { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: #111827; }
+.rank-3 { background: linear-gradient(135deg, #f97316, #ea580c); color: #431407; }
+.rank-default { background: #e5e7eb; color: #1f2937; }
+.current-user-row {
+    background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(147,51,234,0.08));
+}
+.user-highlight {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.user-highlight .badge {
+    background: rgba(59,130,246,0.15);
+    color: #1d4ed8;
+}
+.leaderboard-footer {
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    border-radius: 0 0 18px 18px;
+    padding: 1.5rem 2rem;
+}
+@media (max-width: 768px) {
+    .leaderboard-card {
+        border-radius: 12px;
+    }
+    .leaderboard-header, .leaderboard-footer {
+        padding: 1.5rem;
+        border-radius: 12px 12px 0 0;
+    }
+    .leaderboard-table {
+        font-size: 0.9rem;
+    }
+    .rank-badge {
+        width: 2rem;
+        height: 2rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-4 leaderboard-container">
+    <div class="card leaderboard-card">
+        <div class="leaderboard-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+            <div>
+                <p class="mb-1 text-uppercase small text-white-50">Global Leaderboard</p>
+                <h2 class="mb-2">Top Learners on AskUP</h2>
+                <p class="mb-0">Celebrate consistency, collaboration, and curiosity.</p>
+            </div>
+            <div class="mt-3 mt-md-0 text-md-end">
+                <div class="user-highlight p-2 rounded bg-white bg-opacity-10">
+                    <div>
+                        <small class="text-white-50">Your Rank</small>
+                        <div class="fs-4 fw-bold text-white">#{{ user_rank|default:'—' }}</div>
+                    </div>
+                    <span class="badge rounded-pill">Keep it up!</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <ul class="nav nav-pills category-tabs mb-4" role="tablist">
+                {% for slug,label in categories %}
+                <li class="nav-item me-2" role="presentation">
+                    <a class="nav-link {% if slug == current_category %}active{% endif %}"
+                       href="?category={{ slug }}">{{ label }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <div class="table-responsive">
+                <table class="table leaderboard-table align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">Rank</th>
+                            <th scope="col">Learner</th>
+                            <th scope="col" class="text-center">Level</th>
+                            <th scope="col" class="text-center">Points</th>
+                            <th scope="col" class="text-center">Highlights</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for leader in leaders %}
+                        <tr class="{% if leader.student == user %}current-user-row{% endif %}">
+                            <td>
+                                <span class="rank-badge rank-
+                                    {% if forloop.counter == 1 %}1{% elif forloop.counter == 2 %}2{% elif forloop.counter == 3 %}3{% else %}default{% endif %}">
+                                    {% if forloop.counter <= 3 %}
+                                        <i class="fas {% if forloop.counter == 1 %}fa-crown{% elif forloop.counter == 2 %}fa-medal{% else %}fa-award{% endif %}"></i>
+                                    {% else %}
+                                        {{ forloop.counter }}
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="fw-semibold">{{ leader.student.first_name|default:leader.student.username }}</div>
+                                <small class="text-muted">@{{ leader.student.username }}</small>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-primary">Level {{ leader.level }}</span>
+                            </td>
+                            <td class="text-center fw-bold">{{ leader.total_points }} pts</td>
+                            <td class="text-center">
+                                <small class="text-muted">
+                                    {{ leader.highlight|default:"Active contributor" }}
+                                </small>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <i class="fas fa-trophy fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">No leaderboard data yet</h5>
+                                <p class="text-muted">Start asking and answering questions to join the board.</p>
+                                <a href="{% url 'ask_question' %}" class="btn btn-primary">Participate now</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="leaderboard-footer d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <strong>Tips to climb the leaderboard</strong>
+                <ul class="mb-0 small text-muted list-unstyled">
+                    <li>• Ask thoughtful questions daily</li>
+                    <li>• Share detailed answers that help peers</li>
+                    <li>• Maintain your learning streak</li>
+                </ul>
+            </div>
+            <a href="{% url 'gamification_dashboard' %}" class="btn btn-outline-primary">
+                Back to My Progress
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

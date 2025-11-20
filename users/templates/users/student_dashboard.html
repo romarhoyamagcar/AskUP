@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Student Dashboard - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center">
+                <img src="{% static 'images/logo.png' %}" alt="AskUP Logo" class="me-3" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-user-graduate me-2"></i>Student Dashboard
+                    </h2>
+                    <p class="text-muted mb-0">Welcome back, {{ user.first_name|default:user.username }}!</p>
+                </div>
+            </div>
+            <div>
+                <span class="badge bg-success fs-6">
+                    <i class="fas fa-graduation-cap me-1"></i>Student
+                </span>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="dashboard-stats row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card bg-primary text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="mb-0">{{ profile.questions_asked }}</h4>
+                                <p class="mb-0">Questions Asked</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-question-circle fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-success text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="mb-0">{{ profile.answers_given }}</h4>
+                                <p class="mb-0">Answers Given</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-comments fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-info text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="mb-0">{{ profile.messages_sent }}</h4>
+                                <p class="mb-0">Messages Sent</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-envelope fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-warning text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="mb-0">{{ unread_messages }}</h4>
+                                <p class="mb-0">Unread Messages</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-bell fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-bolt me-2"></i>Quick Actions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <a href="{% url 'ask_question' %}" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-plus me-2"></i>Ask Question
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="{% url 'send_message' %}" class="btn btn-outline-success w-100">
+                                    <i class="fas fa-paper-plane me-2"></i>Message Admin
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="{% url 'view_messages' %}" class="btn btn-outline-info w-100">
+                                    <i class="fas fa-inbox me-2"></i>My Messages
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="{% url 'home' %}" class="btn btn-outline-secondary w-100">
+                                    <i class="fas fa-home me-2"></i>Browse Q&A
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-clock me-2"></i>Recent Messages
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if user_messages %}
+                            <div class="list-group list-group-flush">
+                                {% for message in user_messages %}
+                                    <div class="list-group-item border-0 px-0">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-1">
+                                                    <a href="{% url 'message_detail' message.id %}" class="text-decoration-none">
+                                                        {{ message.subject|truncatechars:40 }}
+                                                    </a>
+                                                    {% if not message.is_read %}
+                                                        <span class="badge bg-danger ms-2">New</span>
+                                                    {% endif %}
+                                                </h6>
+                                                <p class="mb-1 text-muted small">
+                                                    {{ message.get_message_type_display }}
+                                                </p>
+                                                <small class="text-muted">{{ message.created_at|timesince }} ago</small>
+                                            </div>
+                                            <span class="badge bg-{{ message.status|yesno:'success,warning,danger' }}">
+                                                {{ message.get_status_display }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="text-center mt-3">
+                                <a href="{% url 'view_messages' %}" class="btn btn-sm btn-outline-primary">View All Messages</a>
+                            </div>
+                        {% else %}
+                            <p class="text-muted text-center py-3">No messages yet. <a href="{% url 'send_message' %}">Send your first message</a>!</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-question me-2"></i>Recent Questions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if user_questions %}
+                            <div class="list-group list-group-flush">
+                                {% for question in user_questions %}
+                                    <div class="list-group-item border-0 px-0">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-1">
+                                                    <a href="{% url 'question_detail' question.pk %}" class="text-decoration-none">
+                                                        {{ question.title|truncatechars:40 }}
+                                                    </a>
+                                                </h6>
+                                                <small class="text-muted">{{ question.created_at|timesince }} ago</small>
+                                            </div>
+                                            <span class="badge bg-light text-dark">
+                                                {{ question.answers.count }} answers
+                                            </span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="text-center mt-3">
+                                <a href="{% url 'home' %}" class="btn btn-sm btn-outline-primary">View All Questions</a>
+                            </div>
+                        {% else %}
+                            <p class="text-muted text-center py-3">No questions yet. <a href="{% url 'ask_question' %}">Ask your first question</a>!</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Information -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user me-2"></i>Profile Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                                <p><strong>Username:</strong> {{ user.username }}</p>
+                                <p><strong>Email:</strong> {{ user.email }}</p>
+                                {% if profile.student_id %}
+                                    <p><strong>Student ID:</strong> {{ profile.student_id }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                {% if profile.department %}
+                                    <p><strong>Department:</strong> {{ profile.department }}</p>
+                                {% endif %}
+                                {% if profile.year_level %}
+                                    <p><strong>Year Level:</strong> {{ profile.year_level }}</p>
+                                {% endif %}
+                                <p><strong>Member Since:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+                                <p><strong>Last Active:</strong> {{ profile.last_active|timesince }} ago</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Privileges -->
+                        <div class="mt-3">
+                            <h6>Account Privileges:</h6>
+                            <div class="d-flex gap-2">
+                                {% if profile.can_message_admins %}
+                                    <span class="badge bg-success">Can Message Admins</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Cannot Message Admins</span>
+                                {% endif %}
+                                
+                                {% if profile.can_post_questions %}
+                                    <span class="badge bg-success">Can Post Questions</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Cannot Post Questions</span>
+                                {% endif %}
+                                
+                                {% if profile.can_answer_questions %}
+                                    <span class="badge bg-success">Can Answer Questions</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Cannot Answer Questions</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

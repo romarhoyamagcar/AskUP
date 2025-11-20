@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Security & Privacy Settings - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/settings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <!-- Settings Header -->
+    <div class="settings-header">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <h1><i class="fas fa-shield-alt me-3"></i>Security & Privacy Settings</h1>
+                <p>Control your privacy and security preferences</p>
+            </div>
+            <div class="text-end">
+                {% if user.is_staff %}
+                    <span class="badge bg-warning text-dark fs-6">
+                        <i class="fas fa-shield-alt me-1"></i>Administrator
+                    </span>
+                {% else %}
+                    <span class="badge bg-success fs-6">
+                        <i class="fas fa-user-graduate me-1"></i>Student
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-content">
+        <!-- Settings Navigation -->
+        <nav class="settings-nav">
+            <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'profile_settings' %}" role="tab">
+                        <i class="fas fa-user"></i>Profile
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" href="{% url 'security_settings' %}" role="tab">
+                        <i class="fas fa-shield-alt"></i>Security & Privacy
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'password_change' %}" role="tab">
+                        <i class="fas fa-key"></i>Password
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'theme_settings' %}" role="tab">
+                        <i class="fas fa-palette"></i>Appearance
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'notification_settings' %}" role="tab">
+                        <i class="fas fa-bell"></i>Notifications
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Security Settings Content -->
+        <div class="settings-section fade-in">
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Security Warning -->
+                    <div class="security-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Security Notice:</strong> These settings control how your information is displayed to other users and how you can be contacted. Choose your privacy level carefully.
+                    </div>
+
+                    <h3>Privacy Controls</h3>
+                    
+                    <form method="post" class="slide-in">
+                        {% csrf_token %}
+                        
+                        <!-- Profile Visibility -->
+                        <div class="notification-group">
+                            <h5><i class="fas fa-eye me-2"></i>Profile Visibility</h5>
+                            
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h6>{{ form.show_email_publicly.label }}</h6>
+                                    <p>{{ form.show_email_publicly.help_text }}</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    {{ form.show_email_publicly }}
+                                </div>
+                            </div>
+                            
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h6>{{ form.show_real_name.label }}</h6>
+                                    <p>{{ form.show_real_name.help_text }}</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    {{ form.show_real_name }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Communication Settings -->
+                        <div class="notification-group">
+                            <h5><i class="fas fa-comments me-2"></i>Communication</h5>
+                            
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h6>{{ form.allow_messages.label }}</h6>
+                                    <p>{{ form.allow_messages.help_text }}</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    {{ form.allow_messages }}
+                                </div>
+                            </div>
+                            
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h6>{{ form.email_notifications.label }}</h6>
+                                    <p>{{ form.email_notifications.help_text }}</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    {{ form.email_notifications }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="settings-save-btn">
+                                <i class="fas fa-save me-2"></i>Save Privacy Settings
+                            </button>
+                            <a href="{% url 'user_settings' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-md-4">
+                    <!-- Current Privacy Status -->
+                    <h5>Privacy Status</h5>
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Current Settings</h6>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Email Visibility:</span>
+                                {% if profile.show_email_publicly %}
+                                    <span class="badge bg-warning">Public</span>
+                                {% else %}
+                                    <span class="badge bg-success">Private</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Real Name Display:</span>
+                                {% if profile.show_real_name %}
+                                    <span class="badge bg-info">Enabled</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Username Only</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Messages:</span>
+                                {% if profile.allow_messages %}
+                                    <span class="badge bg-success">Allowed</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Blocked</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>Email Notifications:</span>
+                                {% if profile.email_notifications %}
+                                    <span class="badge bg-primary">Enabled</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Disabled</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Tips -->
+                    <div class="mt-4">
+                        <h6>Security Tips</h6>
+                        <div class="card">
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        Keep your email private unless necessary
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        Use strong, unique passwords
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        Review privacy settings regularly
+                                    </li>
+                                    <li class="mb-0">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        Report suspicious activity immediately
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Security Actions -->
+                    <div class="mt-4">
+                        <h6>Security Actions</h6>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'password_change' %}" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-key me-2"></i>Change Password
+                            </a>
+                            <a href="{% url 'export_data' %}" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-download me-2"></i>Export My Data
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Data Protection Notice -->
+                    <div class="mt-4">
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-info-circle me-2"></i>Data Protection
+                            </h6>
+                            <p class="mb-0 small">
+                                We protect your personal information according to our 
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal" class="alert-link">Privacy Policy</a>. 
+                                You have full control over your data and can request deletion at any time.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

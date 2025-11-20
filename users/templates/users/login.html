@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login - AskUP{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-hero">
+    <div class="auth-glow"></div>
+    <div class="auth-particles" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="row justify-content-center align-items-center g-4">
+        <div class="col-xl-4 col-lg-5">
+            <div class="auth-card neon-card">
+                <div class="auth-header">
+                    <div class="auth-icon">
+                        <img src="{% static 'images/logo.png' %}" alt="AskUP Logo" class="auth-logo">
+                    </div>
+                    <div>
+                        <p class="eyebrow">Welcome back</p>
+                        <h3>Login to AskUP</h3>
+                        <small>Collaborative learning for ambitious students</small>
+                    </div>
+                </div>
+                <div class="auth-body">
+                    <form method="post" class="auth-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id_username" class="form-label">Username</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user"></i>
+                                <input type="text" class="form-control" id="id_username" name="username" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_password" class="form-label">Password</label>
+                            <div class="input-wrapper password-wrapper">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" class="form-control" id="id_password" name="password" required>
+                                <button type="button" class="toggle-password" data-target="id_password" aria-label="Show password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        {% if form.errors %}
+                            <div class="auth-error">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <p class="mb-0">{{ error }}</p>
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <button type="submit" class="btn auth-btn neon-btn">
+                            <span>Login</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+
+                    <div class="auth-divider"><span>New here?</span></div>
+
+                    <div class="text-center">
+                        <a href="{% url 'signup' %}" class="btn btn-outline-success w-100">
+                            <i class="fas fa-user-plus me-2"></i>Sign Up as Student
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-5">
+            <div class="auth-side-card">
+                <h4><i class="fas fa-sparkles"></i> Why students love AskUP</h4>
+                <ul class="feature-list">
+                    <li>
+                        <span class="feature-icon"><i class="fas fa-graduation-cap"></i></span>
+                        <div>
+                            <strong>Guided learning streaks</strong>
+                            <p>Stay motivated with daily challenges and progress tracking.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="feature-icon"><i class="fas fa-hands-helping"></i></span>
+                        <div>
+                            <strong>Peer & admin support</strong>
+                            <p>Admins respond to tough questions while students collaborate.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="feature-icon"><i class="fas fa-trophy"></i></span>
+                        <div>
+                            <strong>Gamified growth</strong>
+                            <p>Earn badges, climb the leaderboard, and unlock perks.</p>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="role-badges">
+                    <div>
+                        <span class="badge student">Student</span>
+                        <small>Ask, learn, and level up together.</small>
+                    </div>
+                    <div>
+                        <span class="badge admin">Admin</span>
+                        <small>Guide discussions & keep knowledge flowing.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.toggle-password').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const targetId = btn.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            if (!input) return;
+            const isPassword = input.getAttribute('type') === 'password';
+            input.setAttribute('type', isPassword ? 'text' : 'password');
+            btn.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+            btn.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+        });
+    });
+});
+</script>
+{% endblock %}

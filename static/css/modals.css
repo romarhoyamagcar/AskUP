@@ -1,0 +1,251 @@
+/* Modal Styles */
+.modal-content {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border-radius: 1rem 1rem 0 0;
+    border: none;
+    padding: 1.5rem 2rem;
+}
+
+.modal-header h4 {
+    margin-bottom: 0;
+    font-weight: 600;
+}
+
+.modal-header .btn-close {
+    background: none;
+    border: none;
+    color: white;
+    opacity: 0.8;
+    font-size: 1.5rem;
+}
+
+.modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 2rem;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    border: none;
+    padding: 1rem 2rem 2rem;
+}
+
+/* About Modal Specific */
+.about-modal .modal-header {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.about-section {
+    margin-bottom: 2rem;
+}
+
+.about-section h5 {
+    color: #007bff;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+}
+
+.feature-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.feature-list li:last-child {
+    border-bottom: none;
+}
+
+.feature-list li i {
+    color: #28a745;
+    margin-right: 0.75rem;
+    width: 20px;
+}
+
+/* Terms of Service Modal */
+.terms-modal .modal-header {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.terms-section {
+    margin-bottom: 2rem;
+}
+
+.terms-section h5 {
+    color: #dc3545;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #f8d7da;
+    padding-bottom: 0.5rem;
+}
+
+.terms-section h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.terms-list {
+    padding-left: 1.5rem;
+}
+
+.terms-list li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.warning-box {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 1px solid #ffeaa7;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.warning-box .fas {
+    color: #856404;
+    margin-right: 0.5rem;
+}
+
+.danger-box {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border: 1px solid #f5c6cb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.danger-box .fas {
+    color: #721c24;
+    margin-right: 0.5rem;
+}
+
+/* Privacy Policy Modal */
+.privacy-modal .modal-header {
+    background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+}
+
+/* Admin Modal Specific */
+.admin-modal .modal-header {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    color: #212529;
+}
+
+.admin-modal .btn-close {
+    color: #212529;
+    opacity: 0.8;
+}
+
+.admin-modal .btn-close:hover {
+    opacity: 1;
+}
+
+/* Student Modal Specific */
+.student-modal .modal-header {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.student-modal .btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.privacy-section {
+    margin-bottom: 2rem;
+}
+
+.privacy-section h5 {
+    color: #6f42c1;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #e2d9f3;
+    padding-bottom: 0.5rem;
+}
+
+/* Contact Modal */
+.contact-modal .modal-header {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.contact-info {
+    background: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.contact-item:last-child {
+    margin-bottom: 0;
+}
+
+.contact-item i {
+    color: #17a2b8;
+    margin-right: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+/* Responsive Modal Adjustments */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 1rem;
+    }
+    
+    .modal-header {
+        padding: 1rem 1.5rem;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .modal-footer {
+        padding: 1rem 1.5rem 1.5rem;
+    }
+}
+
+/* Smooth Scrolling in Modals */
+.modal-body {
+    scrollbar-width: thin;
+    scrollbar-color: #dee2e6 #f8f9fa;
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #dee2e6;
+    border-radius: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #adb5bd;
+}

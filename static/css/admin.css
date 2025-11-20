@@ -1,0 +1,285 @@
+/* Admin Dashboard Styles */
+.admin-dashboard {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.admin-header {
+    background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.admin-stats .card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.admin-stats .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15);
+}
+
+.admin-stats .card-body {
+    padding: 1.5rem;
+}
+
+.admin-stats .stat-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+.admin-stats .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.admin-stats .stat-label {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0;
+}
+
+/* Admin Cards Color Schemes */
+.admin-card-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+}
+
+.admin-card-success {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    color: white;
+}
+
+.admin-card-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    color: white;
+}
+
+.admin-card-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    color: #212529;
+}
+
+.admin-card-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+}
+
+/* Admin Tables */
+.admin-table {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.admin-table .table {
+    margin-bottom: 0;
+}
+
+.admin-table .table thead th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+}
+
+.admin-table .table tbody td {
+    border: none;
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.admin-table .table tbody tr {
+    border-bottom: 1px solid #f8f9fa;
+    transition: background-color 0.3s ease;
+}
+
+.admin-table .table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Admin Navigation */
+.admin-nav {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.admin-nav .nav-link {
+    color: #495057;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.admin-nav .nav-link:hover {
+    background-color: #f8f9fa;
+    color: #007bff;
+}
+
+.admin-nav .nav-link.active {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+}
+
+/* Admin Filters */
+.admin-filters {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.admin-filters .form-select {
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+}
+
+/* Admin Actions */
+.admin-actions .btn {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+}
+
+/* Admin Messages */
+.admin-message {
+    border-radius: 0.75rem;
+    border: none;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+.admin-message .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    font-weight: 600;
+}
+
+/* Admin Performance Metrics */
+.performance-card {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.performance-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.performance-metric {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.performance-label {
+    color: #6c757d;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Admin Question Queue */
+.question-queue-item {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.question-queue-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.question-queue-item.priority-urgent {
+    border-left: 4px solid #dc3545;
+}
+
+.question-queue-item.priority-high {
+    border-left: 4px solid #fd7e14;
+}
+
+.question-queue-item.priority-medium {
+    border-left: 4px solid #ffc107;
+}
+
+.question-queue-item.priority-low {
+    border-left: 4px solid #28a745;
+}
+
+/* Responsive Admin Styles */
+@media (max-width: 768px) {
+    .admin-dashboard {
+        padding: 1rem 0;
+    }
+    
+    .admin-header {
+        padding: 1.5rem;
+        text-align: center;
+    }
+    
+    .admin-stats .col-md-3 {
+        margin-bottom: 1rem;
+    }
+    
+    .admin-nav {
+        padding: 1rem;
+    }
+    
+    .admin-filters {
+        padding: 1rem;
+    }
+    
+    .admin-actions .btn {
+        width: 100%;
+        margin-right: 0;
+    }
+}
+
+/* Animation for admin elements */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.admin-stats .card {
+    animation: fadeInDown 0.6s ease forwards;
+}
+
+.admin-stats .col-md-3:nth-child(1) .card { animation-delay: 0.1s; }
+.admin-stats .col-md-3:nth-child(2) .card { animation-delay: 0.2s; }
+.admin-stats .col-md-3:nth-child(3) .card { animation-delay: 0.3s; }
+.admin-stats .col-md-3:nth-child(4) .card { animation-delay: 0.4s; }
