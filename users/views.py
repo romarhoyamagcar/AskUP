@@ -28,6 +28,13 @@ from .messaging_views import (
 )
 
 
+def get_user_messages_queryset(user):
+    """Return base queryset for messages relevant to the user"""
+    if user.is_staff:
+        return Message.objects.all()
+    return Message.objects.filter(Q(sender=user) | Q(recipient=user))
+
+
 # Helper function to check if user is admin
 def is_admin(user):
     return user.is_authenticated and user.is_staff
@@ -278,7 +285,7 @@ def view_messages(request):
         template = 'users/admin_messages.html'
     else:
         # Student view: only their messages
-        user_messages = Message.objects.filter(sender=request.user).order_by('-created_at')
+        user_messages = get_user_messages_queryset(request.user).order_by('-created_at').distinct()
         context = {'messages': user_messages}
         template = 'users/student_messages.html'
     
@@ -288,13 +295,13 @@ def view_messages(request):
 @login_required
 def get_messages_json(request):
     """Return latest messages and unread count for realtime UI updates"""
-    if request.user.is_staff:
-        queryset = Message.objects.all()
-    else:
-        queryset = Message.objects.filter(sender=request.user)
+    queryset = get_user_messages_queryset(request.user)
 
     total_count = queryset.count()
-    unread_count = queryset.filter(is_read=False).count()
+    if request.user.is_staff:
+        unread_count = queryset.filter(is_read=False).count()
+    else:
+        unread_count = queryset.filter(recipient=request.user, is_read=False).count()
 
     limit = int(request.GET.get('limit', 5))
     messages_qs = queryset.select_related('sender', 'recipient').order_by('-created_at')[:limit]
@@ -333,7 +340,9 @@ def mark_message_read(request, message_id):
     """Mark a message as read (students or admins)"""
     message = get_object_or_404(Message, id=message_id)
 
-    if not request.user.is_staff and message.sender != request.user:
+    if (not request.user.is_staff and
+            message.sender != request.user and
+            message.recipient != request.user):
         return JsonResponse({'success': False, 'error': 'Not allowed'}, status=403)
 
     if not message.is_read:
@@ -507,9 +516,9 @@ def student_dashboard(request):
     
     # Get user's messages (handle potential missing Message model)
     try:
-        all_user_messages = Message.objects.filter(sender=request.user).order_by('-created_at')
+        all_user_messages = get_user_messages_queryset(request.user).order_by('-created_at')
         user_messages = all_user_messages[:5]
-        unread_messages_count = all_user_messages.filter(is_read=False).count()
+        unread_messages_count = all_user_messages.filter(recipient=request.user, is_read=False).count()
     except:
         user_messages = []
         unread_messages_count = 0

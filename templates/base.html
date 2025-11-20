@@ -245,7 +245,9 @@
                                 {% if view_messages_url %}
                                     <li><a class="dropdown-item" href="{{ view_messages_url }}">
                                         <i class="fas fa-envelope me-2"></i>Messages
-                                        <span class="badge bg-primary ms-2">2</span>
+                                        {% if unread_messages_count|default:0 > 0 %}
+                                            <span class="badge bg-primary ms-2">{{ unread_messages_count }}</span>
+                                        {% endif %}
                                     </a></li>
                                 {% endif %}
                                 <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#helpModal">
